@@ -1,0 +1,24 @@
+&CONTROL
+calculation = "relax",
+prefix = "graph+hydrogen",
+pseudo_dir = "../pseudopotentials",
+outdir = "../outputs",
+restart_mode = "from_scratch",
+/
+&SYSTEM
+ibrav = 0,
+celldm(1) = 4.648725932,
+ntyp = 2,
+ecutwfc = 32,
+ecutrho = 320.0,
+input_dft = 'vdW-DF',
+/
+CELL_PARAMETERS alat
+  2  0  0
+  0  1.7320508075688772  0
+  0  0  10
+ATOMIC_SPECIES
+C      12.0107   C.pbe-rrkjus.UPF
+H      1.00784   H.pbe-rrkjus_psl.1.0.0.UPF
+K_POINTS automatic
+4 4 1 0 0 0
