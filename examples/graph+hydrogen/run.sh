@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python main.py > program.out
+python main.py > program.out &
