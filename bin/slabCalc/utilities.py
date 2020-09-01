@@ -26,6 +26,7 @@ def run(cmd,simulation,slab_index,option="fs",savein=False,infile=None,saveout=F
 	try:
 		simulation.save("temp.json")
 		out = calc.run(cmd,istring,saveout,outfile,savecoords,coordfile)
+		print(out.jobdone)
 		if out.jobdone:
 			slab["energy"] = out.energy[-1]
 			slab["status"] = "calculated"
@@ -56,7 +57,7 @@ def read_from_string(istring):
 	Sets an pw calc object from input string
 	"""
 	calc = pw.calc()
-	reset_calc(calc)
+	#reset_calc(calc)
 
 	with open("ifile.in","w") as f:
 		f.write(istring)

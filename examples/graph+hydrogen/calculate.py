@@ -20,16 +20,14 @@ tsim.load(simfile)
 
 tsim.calculate(cmd,savein=True,saveout=True,savecoords=True)
 
-"""
 for slab in tsim.simdata:
 	ssite = slab["ssite"]
-	if ssite==[<INSERIR>]:
+	if ssite==[1.23, 1.4202816622064793, 0.0]:
 		slab["ssite label"] = "hexagon center"
-	elif ssite==[<INSERIR>]:
+	elif ssite==[2.46, 0.7101408311032397, 0.0]:
 		slab["ssite label"] = "above atom"
-	elif ssite==[1.845, 2.485492908861339, 0.0]:
-		slab[<INSERIR>] = "above bond"
-"""
+	elif ssite==[2.46, 1.4202816622064793, 0.0]:
+		slab["ssite label"] = "above bond"
 
 keys = tsim.simdata[0].keys()
 keys.remove("input_string")
