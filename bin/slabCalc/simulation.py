@@ -73,8 +73,7 @@ class Sim(object):
                                 slab.writexyz("./structures/%s.xyz"%slab.label)
                             istring = slab.write_qe_input(inpmodel=inpmodel,
                                                           saveinp=savein,
-                                                          inpfile="./inputs/%s.in"%slab.label) 
-                                                          #,saveinp=True,inpfile="%s.in"%slab.label)
+                                                          inpfile="./inputs/%s.in"%slab.label)
                             slab_data["input_string"] = istring
                             self.simdata.append(slab_data)
                             slab.clear()
@@ -131,7 +130,7 @@ class Sim(object):
         if fname==None:
             fname="results.csv"
         if keys==None:
-            keys = self.simdata[0].keys()
+            keys = list(self.simdata[0].keys())
             try:
                 keys.remove("input_string")
             except:
