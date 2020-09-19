@@ -22,14 +22,14 @@ class Slab(mol3D,object):
 
     subclasse da classe mol3D, para mais informações leia a documentação do molSimplify
     """
-    def __init__(self,sfile,mfile,cell_vector=None,extents=None,label="slab"):
+    def __init__(self,surface,molecule,cell_vector=None,extents=None,label="slab"):
         """
         Método Construtor
 
         Propriedades
-              (str)  sfile         :  arquivo xyz da superfície
+           (object)  surface       :  objeto mol3D da superfície
               
-              (str)  mfile         :  arquivo xyz da molécula
+           (object)  molecule      :  objeto mol3D da molécula
               
              (list)  scell_vector  :  vetores de célula, usados para determinar
                                       a extensão da superfície. Você pode tanto
@@ -42,11 +42,8 @@ class Slab(mol3D,object):
         super(Slab, self).__init__()
         self.label = label
         # READING STRUCTURES FROM XYZ FILE
-        self.readfromxyz(sfile)
-        self.sfile = sfile
-        self.molecule = mol3D()
-        self.molecule.readfromxyz(mfile)
-        self.mfile = mfile
+        self.molecule = molecule
+        self.surface = surface
 
         if cell_vector!=None:
             self.extents = find_extents_cv(cell_vector)
@@ -63,14 +60,14 @@ class Slab(mol3D,object):
 
            Rotational Parameters
            ---------------------
-            (bool) rot    : if set to true then the molecule will be rotate
+            (bool) rot    : se Verdadeiro então a molécula vai ser rotacionada
            (float) angle  : ângulo
             (list) axis   : eixo
             (list) rpoint : ponto por onde passa o eixo de rotação
         """
         # INITIALISING THE COMBINED SLAB
         cslab = mol3D()
-        cslab.copymol3D(self)
+        cslab.copymol3D(self.surface)
         # INITIALISING THE PAYLOAD MOLECULE
         payload = mol3D()
         payload.copymol3D(self.molecule)
@@ -91,7 +88,8 @@ class Slab(mol3D,object):
         except:
             print("Missing extents information\nUsing z=0 as reference to align distance")
             payload.translate([0, 0, adist])
-        # PLACEMENT METHOD
+        # COMBINING MOLECULE AND SURFACE INTO SLAB
+        self.copymol3D(cslab)
         self.combine(payload)
 
         self.sanity = self.sanitycheck(silence=True)
@@ -102,23 +100,15 @@ class Slab(mol3D,object):
 
         print("Slab built")
 
-    def write_qe_input(self,inpmodel=None,saveinp=None,inpfile=None):
+    def write_qe_input(self,calc,saveinp=None,inpfile=None):
         """
-        Retorna um input do Quantum Espresso em formato de string
-
-        calc : objeto da biblioteca QE
+        Retorna um input do Quantum Espresso em formato de string confome um
+        um objeto calc pré-configurado
+        
+        (object) calc      : objeto da biblioteca QE
         """
-        calc = pw.calc()
-        if inpmodel!=None:
-            calc.read_input(inpmodel)
-
         if saveinp and inpfile==None:
-            if "inputs_qe" not in os.listdir("."):
-                os.mkdir("inputs_qe")
-            inpfile = "./inputs_qe/%s.in"%self.label
-
-        #calc.x,calc.y,calc.z,calc.atomic_species,calc.atomic_mass,calc.atom_type= ([],[],[],[],[],[])
-        calc.system["nat"] = len(self.atoms)
+            inpfile = "%s.in"%self.label
 
         for atom in self.atoms:
             calc.x.append(atom.coords()[0])
@@ -129,10 +119,11 @@ class Slab(mol3D,object):
                 calc.atomic_mass.append(atom.mass)
                 calc.atomic_species.append(atom.symbol())
 
+        calc.system["nat"] = len(self.atoms)
         calc.system["ntyp"] = len(calc.atomic_species)
-
+        
         return calc.build_input(saveinp,inpfile)
-
+    
     def copyslab(self,other):
         """
         Método para fazer cópias das superfícies
@@ -162,4 +153,8 @@ class Slab(mol3D,object):
             especificados em "inds"
         - mol3D_object.centersym()
             # retorna o centro de simetria de um objeto mol3D
+            
+        Leitura e escrita de arquivos xyz:
+            mol3D.writexyz()
+            
 """
