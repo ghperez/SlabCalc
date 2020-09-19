@@ -8,7 +8,7 @@
     
     Este módulo também pode ser usado para checar os cálculos em andamento
     usando o script no terminal:
-        python utilities -check <nome do arquivo json contendo o simdata>
+        python slabCalc.utilities -check <nome do arquivo json contendo o simdata>
 """
 import qe.pw as pw
 import os
@@ -16,7 +16,7 @@ import json
 
 def run(cmd,simulation,slab_index,option="fs",savein=False,infile=None,saveout=False,outfile=None,savecoords=False,coordfile=None):
 	"""
-	Runs qe.pw calculation for slab
+	Roda os cálculos do qe.pw para a superfície
 	"""
 	slab = simulation.simdata[slab_index]
 	calc = read_from_string(slab["input_string"])
@@ -26,6 +26,7 @@ def run(cmd,simulation,slab_index,option="fs",savein=False,infile=None,saveout=F
 	try:
 		simulation.save("temp.json")
 		out = calc.run(cmd,istring,saveout,outfile,savecoords,coordfile)
+		print(out.jobdone)
 		if out.jobdone:
 			slab["energy"] = out.energy[-1]
 			slab["status"] = "calculated"
@@ -37,8 +38,9 @@ def run(cmd,simulation,slab_index,option="fs",savein=False,infile=None,saveout=F
 
 def set_restart_mode(calc,option):
 	"""
-	Changes qe input parameter restart mode according to option
-
+	Muda o parâmetro restart_mode do input do Quantum Espresso conforme
+	o parâmetro option
+	
 	fs -> from_scratch
 	r  -> restart
 
@@ -53,10 +55,9 @@ def reset_calc(calc):
 
 def read_from_string(istring):
 	"""
-	Sets an pw calc object from input string
+	Configura um objeto pw calc a partir de uma string
 	"""
 	calc = pw.calc()
-	reset_calc(calc)
 
 	with open("ifile.in","w") as f:
 		f.write(istring)
@@ -68,14 +69,14 @@ def read_from_string(istring):
 
 def remove_temp():
 	"""
-	Remove temporary files written during calculations
+	Remove arquivos temporários escritos durante os cálculos
 	"""
 	if "temp.json" in os.listdir("."):
 		os.remove("temp.json")
 
 def check_status(fname="temp.json"):
 	"""
-	Handful function for checking the simulation status while running
+	Função para checar o estado da simulação
 	"""
 	with open(fname,"rb") as f:
 		data = json.load(f)

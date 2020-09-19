@@ -28,7 +28,7 @@ class Sim(object):
     def build(self,slab,inpmodel=None,params=None,savein=False,save_slabs=False):
         """
         Constrói a superfície e armazena suas informações num dicionário
-		"""
+        """
 
         self.set_params(params)
 
@@ -73,8 +73,7 @@ class Sim(object):
                                 slab.writexyz("./structures/%s.xyz"%slab.label)
                             istring = slab.write_qe_input(inpmodel=inpmodel,
                                                           saveinp=savein,
-                                                          inpfile="./inputs/%s.in"%slab.label) 
-                                                          #,saveinp=True,inpfile="%s.in"%slab.label)
+                                                          inpfile="./inputs/%s.in"%slab.label)
                             slab_data["input_string"] = istring
                             self.simdata.append(slab_data)
                             slab.clear()
@@ -131,7 +130,7 @@ class Sim(object):
         if fname==None:
             fname="results.csv"
         if keys==None:
-            keys = self.simdata[0].keys()
+            keys = list(self.simdata[0].keys())
             try:
                 keys.remove("input_string")
             except:
@@ -152,7 +151,7 @@ class Sim(object):
 
     def save(self,fname=None):
         """
-		Salva o dicionário simdata em um arquivo json
+	Salva o dicionário simdata em um arquivo json
         """
         if fname==None:
             fname = "simdata.json"
@@ -182,7 +181,10 @@ class Sim(object):
             
             if "angles" in params.keys():
                 self.angles = params["angles"]
-                self.axis   = params["axis"]
+                try:
+                	self.axis   = params["axis"]
+                except KeyError:
+                	self.axis = [[0,0,1]]
             else:
                 self.angles = [0]
                 self.axis   = [[0,0,1]]
