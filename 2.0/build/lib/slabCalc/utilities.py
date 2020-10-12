@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
     SlabCalc Utilities
     ------------------
     Funções usadas em outros módulos do pacote SlabCalc
     
     Este módulo também pode ser usado para checar os cálculos em andamento
     usando o script no terminal:
-        python utilities -check <nome do arquivo json contendo o simdata>
+        python slabCalc.utilities -check <nome do arquivo json contendo o simdata>
 """
 import qe.pw as pw
 import os

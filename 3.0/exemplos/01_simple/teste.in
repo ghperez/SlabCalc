@@ -1,0 +1,78 @@
+&CONTROL
+calculation = "relax",
+restart_mode = "from_scratch",
+pseudo_dir = "../pseudopotentials/",
+prefix = "slabCalc_example1",
+outdir = "outputs",
+etot_conv_thr = 1.0E-5,
+forc_conv_thr = 1.0D-4,
+nstep = 200,
+/
+&SYSTEM
+ibrav = 0,
+celldm(1) = 4.64872593294,
+nspin = 1,
+occupations = "smearing",
+degauss = 0.02,
+ecutwfc = 32,
+ecutrho = 320.0,
+smearing = "gaussian",
+input_dft = "vdW-DF",
+nat = 36,
+ntyp = 2,
+/
+&ELECTRONS
+mixing_beta = 0.5,
+electron_maxstep = 100,
+conv_thr = 1.0D-6,
+diagonalization = "david",
+/
+&IONS
+ion_dynamics = "bfgs",
+/
+ATOMIC_SPECIES
+C   12.0107   C.pbe-rrkjus.UPF
+H   1.0079   H.pbe-rrkjus_psl.1.0.0.UPF
+CELL_PARAMETERS alat
+3   0   0
+0   3.4641016151377544   0
+0   0   0
+ATOMIC_POSITIONS 
+C   1.23   0.0   0.0
+C   0.0   0.710141   0.0
+C   0.0   2.130422   0.0
+C   1.23   2.840563   0.0
+C   1.23   4.260845   0.0
+C   0.0   4.970986   0.0
+C   0.0   6.391267   0.0
+C   1.23   7.101408   0.0
+C   3.69   0.0   0.0
+C   2.46   0.710141   0.0
+C   2.46   2.130422   0.0
+C   3.69   2.840563   0.0
+C   3.69   4.260845   0.0
+C   2.46   4.970986   0.0
+C   2.46   6.391267   0.0
+C   3.69   7.101408   0.0
+C   6.15   0.0   0.0
+C   4.92   0.710141   0.0
+C   4.92   2.130422   0.0
+C   6.15   2.840563   0.0
+C   6.15   4.260845   0.0
+C   4.92   4.970986   0.0
+C   4.92   6.391267   0.0
+C   6.15   7.101408   0.0
+C   4.38743   4.473142   3.0
+C   2.992763   4.473247   3.0
+C   2.295327   5.681241   3.0
+C   2.99257   6.889112   3.0
+C   4.387237   6.889006   3.0
+C   5.084673   5.681012   3.0
+H   4.932804   3.528527   3.0
+H   2.447334   3.52884   3.0
+H   1.204732   5.68109   3.0
+H   2.447196   7.833726   3.0
+H   4.932666   7.833413   3.0
+H   6.175268   5.681163   3.0
+K_POINTS automatic
+4   4   1   0   0   0
