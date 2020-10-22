@@ -62,7 +62,7 @@ def set_calc(slab):
 		calc.pseudopotential = ["C.pbe-rrkjus.UPF","H.pbe-rrkjus_psl.1.0.0.UPF"]
 		
 		# ATOMIC_POSITIONS
-		#calc.atomic_positions_units = "bohr"
+		calc.atomic_positions_units = "angstrom"
 		
 		# K_POINTS
 		calc.k_points_type = "automatic"
