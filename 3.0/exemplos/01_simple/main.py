@@ -1,5 +1,4 @@
 from slabCalc import *
-from math import *
 import os
 
 SURFACES_DIR  = os.path.join("..","surfaces","")
@@ -18,7 +17,7 @@ if __name__=="__main__":
 	"""SETTING BUILDING OPTIONS"""
 	
 	# Selecting a surface and molecules
-	surface_file = "graphene.xyz"
+	surface_file = "graphene_3x2.xyz"
 	molecule_file = "benzene.xyz"
 	surface = create(SURFACES_DIR + surface_file)
 	molecule = create(MOLECULES_DIR + molecule_file)
@@ -29,7 +28,7 @@ if __name__=="__main__":
 		   	  "align_point" : molecule.centersym(), 
 		             "dist" : 3, #align distance between "site" in surface and "align_point" in molecule
 		         "rotation" : True,
-		            "angle" : 30
+		            "angle" : 45
 		     } 
 	molecule.set_molecule_parameters(params)
 		      
@@ -40,8 +39,8 @@ if __name__=="__main__":
 	
 	# Building
 	slab.build()
-		
+
 	# Writing resulting structure to xyz file
-	slab.writexyz("graphene_benzene.xyz")
+	slab.writexyz("graphene_benzene_test.xyz")
 	
 	print("Done!")

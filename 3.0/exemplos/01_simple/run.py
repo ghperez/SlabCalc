@@ -81,11 +81,9 @@ if __name__=="__main__":
 	slab.readfromxyz("graphene_benzene.xyz")
 	calc = set_calc(slab)
 	istring = calc.build_input(True,"graphene_benzene.in")
-	"""
 	calc.run(CMD, istring, SAVEOUT, OUTFILE, SAVECOORDS, COORDSFILE)
 	
 	if calc.jobdone:
 		print("executed QE calculation routine with success")
 	else:
 		print("something went wrong")
-	"""

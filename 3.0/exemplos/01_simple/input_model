@@ -1,7 +1,7 @@
 &CONTROL
 calculation = "relax",
 prefix = "slabcalc_simple",
-pseudo_dir = "./pseudopotentials",
+pseudo_dir = "../pseudopotentials",
 outdir = "./outputs",
 etot_conv_thr = 1.0E-5,
 forc_conv_thr = 1.0D-4,

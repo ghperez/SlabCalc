@@ -44,26 +44,29 @@ class mol3D(ms.mol3D):
             (list) axis         : eixo (z axis is the default)
             (list) rpoint       : ponto por onde passa o eixo de rotacao
 		"""
-		self.site   = params["site"]
+		self.site   = params["site"].copy()
 		self.dist   = params["dist"]
-		self.align_point = params["align_point"]
+		self.align_point = params["align_point"].copy()
 		
 		if "rotation" in params.keys() and params["rotation"]==True:
 			try:
 				self.rotation = True
 				self.angle    = params["angle"]
 				if "axis" in params.keys():
-					self.axis = params["axis"]
+					self.axis = params["axis"].copy()
 				else:
 					self.axis = [0,0,1]
 				if "rpoint" in params.keys():
-					self.rpoint = params["rpoint"]
+					self.rpoint = params["rpoint"].copy()
 				else:
 					self.rpoint = self.centersym()
 			except:
 				pass
 		else:
 			self.rotation = False 
+			self.angle    = None
+			self.axis     = None
+			self.rpoint   = None
 		
 	def get_coord_between(self,*inds):
 		if type(inds[0])==list or type(inds[0])==tuple:
@@ -78,13 +81,13 @@ class mol3D(ms.mol3D):
 			pass
 		
 	def copy_molecule_parameters(self,other):
-		params = {       "site" : other.site,
-		   		  "align_point" : other.align_point,
+		params = {       "site" : other.site.copy(),
+		   		  "align_point" : other.align_point.copy(),
 		   		  		 "dist" : other.dist,
 		   		     "rotation" : other.rotation,
 		   		        "angle" : other.angle,
-		   		         "axis" : other.axis,
-		   		       "rpoint" : other.rpoint
+		   		         "axis" : other.axis.copy(),
+		   		       "rpoint" : other.rpoint.copy()
 				 }
 		self.set_molecule_parameters(params)
 
@@ -110,8 +113,14 @@ class Slab(mol3D,object):
 			(list)  extents       :  um vetor de coordenadas dos limites da superfície
 		"""
 		super(Slab, self).__init__()
-		self.molecules = molecules
-		self.surface = surface
+		
+		if type(molecules)==tuple:
+			self.molecules = list(molecules)
+		
+		if surface==None:
+			self.surface = mol3D()
+		else:
+			self.surface = surface
 
 		if cell_vector!=None:
 			self.extents = find_extents_cv(cell_vector)
@@ -120,7 +129,7 @@ class Slab(mol3D,object):
 		else:
 			self.extents = [0,0,0]
 
-	def build(self):
+	def build(self,silent=False):
 		"""
 		Insere a molécula sob a superfície
 
@@ -131,7 +140,7 @@ class Slab(mol3D,object):
 		"""
 		# INITIALISING THE COMBINED SLAB
 		cslab = mol3D()
-		if surface!=None:
+		if self.surface!=None:
 			cslab.copymol3D(self.surface)
 		else:
 			print("\n!!! Please set the slab's surface !!!\n")
@@ -141,10 +150,11 @@ class Slab(mol3D,object):
 			payload = mol3D()
 			payload.copymol3D(self.molecules[i])
 			# ROTATION
-			if payload.rotation==True:
+			if payload.rotation==True and payload.angle!=0:
 				try:
 					rotate_around_axis(payload,payload.rpoint,payload.axis,payload.angle)
-					print("Molecule Rotated")
+					if not silent :
+						print("Molecule Rotated")
 				except:
 					print("\n!!! Error during molecule%i rotation !!!\nPlease, check the molecule rotational parameters\n"%(i+1))
 			# TRANSLATION
@@ -158,11 +168,12 @@ class Slab(mol3D,object):
 				print("\n!!! Error while building molecule %d !!!\nPlease, check the molecule parameters.\n"%(i+1))
 			# CHECKING SANITY
 			self.sanity = self.sanitycheck(silence=True)
-			if self.sanity[0]:
+			if self.sanity[0] and not silent:
 				print("!!! Molecule %i might be overlapping!\nThe minimum distance is %f.\n"%(i+1,self.sanity[1]))
 		
 		self.copymol3D(cslab)
-		print("Slab built")
+		if not silent:
+			print("Slab built")
 
 	def set_qe_calculation(self,calc):
 		"""
@@ -185,20 +196,35 @@ class Slab(mol3D,object):
         
 		return calc
     
-	def copyslab(self,other):
+	def copy(self):
 		"""
         Método para fazer cópias das superfícies
 		"""
-		self.surface.copymol3D(other.surface)
-		self.molecule.copymol3D(other.molecule)
-		self.extents = other.extents
-		self.copymol3D(other)
+		copyslab = Slab()
+		copyslab.surface.copymol3D(self.surface)
+		copyslab.molecules = self.copy_molecules()
+		copyslab.extents = self.extents.copy()
+		copyslab.copymol3D(self)
+		
+		return copyslab
+		
+	def copy_molecules(self):
+		"""
+		Return a copy of molecules list
+		"""
+		copy_molecules = list()
+		if len(self.molecules)!=0:
+			for m in self.molecules:
+				copymol = mol3D()
+				copymol.copymol3D(m)
+				copy_molecules.append(copymol)
+		return copy_molecules
 
 	def clear(self):
 		"""
         Reinicia a superfície
 		"""
-		self.__init__(self.surface,self.molecule,extents=self.extents)
+		self.__init__(self.surface,self.molecules,extents=self.extents)
 		print("Slab reset!")
 
 """

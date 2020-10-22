@@ -1,8 +1,11 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- fix rotational parameters configuration in *mol3D()*
-- change *copymol3D()* so it can copy the new properties introduced 10/11/2020
+- re-run batch_simulation's build script setting the correct sites
+- run simple example in university's computer
+- run batch_simulation example in Titanio's cluster for graphene+benzene
+- make Slab() able to create the structures receiving file names
+- update Slab's clear method
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
@@ -15,9 +18,27 @@
 	- **molecule parameters** need to be set before building routine
 	- implemented *set_molecule_parameters()*
 	- implemented *get_coord_between()*
-	
+
 ## 12/10/2020
-- made minimal example building routine
+- made minimal example building routine (simple example)
 - fixed rotational parameters configuration
-- implemented *copy_molecule_parameters()* method and overrid method *copymol3D()* 
+- implemented *copy_molecule_parameters()* method and overrid method *copymol3D()*
+- updated *Slab()* object so one can create an instance without passing any parameter (new way to load slabs using xyz files)
+- written the minimal example build and calculating routine
+
+## 13/10/2020
+- reviewed *simulation* module and raised ideas for improving it
+
+## 15/10/2020
+- implemented *create_slabs()* method that replaced *build()* of *Sim()* object
+- implemented *build_slabs()* to build the slabs created using *create_slabs()* method 
+- started writing the build script for *batch_simulation* example
+
+## 19/10/2020
+- updated Slab()'s method *copy*, now it returns another Slab() object
+- fixed problem during copying slab's molecules
+- finished build routine of *batch_simulation* example
+
+## 22/10/2020
+- Fixed and tested slab's *clear* method
 
