@@ -5,7 +5,7 @@ import os
 PSEUDO_DIR  = os.path.join("..","pseudopotentials","")
 CALC_FROM_INPUT = False
 INPUT_MODEL = "input_model"
-CMD = ""
+CMD = "mpirun -np 8 pw.x"
 SAVEOUT = True
 OUTFILE = "calc.out"
 SAVECOORDS = True
