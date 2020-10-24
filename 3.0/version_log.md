@@ -1,11 +1,9 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- re-run batch_simulation's build script setting the correct sites
-- run simple example in university's computer
+- fix the input error in the simple example calculations
 - run batch_simulation example in Titanio's cluster for graphene+benzene
 - make Slab() able to create the structures receiving file names
-- update Slab's clear method
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
@@ -41,4 +39,5 @@
 
 ## 22/10/2020
 - Fixed and tested slab's *clear* method
+- tryed to run the simple simple but it raised an error
 

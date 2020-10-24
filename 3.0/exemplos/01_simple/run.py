@@ -48,6 +48,8 @@ def set_calc(slab):
 		calc.electrons["electron_maxstep"] = 100
 		calc.electrons["conv_thr"]         = "1.0D-6"
 		calc.electrons["diagonalization"]  = "\"david\""
+		calc.electrons["startingpot"]      = "\"atomic\""
+		calc.electrons["startingwfc"]      = "\"atomic+random\""
 		
 		# &IONS
 		calc.ions["ion_dynamics"] = "\"bfgs\""
