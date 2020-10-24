@@ -11,7 +11,6 @@ Created on Sun Aug 30 13:33:26 2020
 """
 from slabCalc.utilities import *
 from slabCalc import *
-import numpy as np
 import os
 import csv
 import json
@@ -53,3 +52,18 @@ class Sim(object):
 			slab.build(silent=silent)
 		if not silent:
 			print("All slabs built!")
+			
+	def set_calculations_params(self):
+		pass
+		
+	def calculate_slabs(self,cmd):
+		"""
+		Remember to define slab.calc property
+		"""
+		for slab in self.slabs:
+			calc = pw.calc()
+			out  = calc.run(CMD, slab.istring, slab.saveout, slab.outfile, slab.savecoords, slab.coordsfile)
+			if out.jobdone:
+				self.energies.append(out.energy[-1])
+	
+	

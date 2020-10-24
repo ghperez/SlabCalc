@@ -193,8 +193,6 @@ class Slab(mol3D,object):
 
 		calc.system["nat"] = len(self.atoms)
 		calc.system["ntyp"] = len(calc.atomic_species)
-        
-		return calc
     
 	def copy(self):
 		"""

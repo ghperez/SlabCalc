@@ -1,9 +1,11 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- fix the input error in the simple example calculations
+- test new set_calculation method
+- remove calculations methods of Sim object (?)
 - run batch_simulation example in Titanio's cluster for graphene+benzene
-- make Slab() able to create the structures receiving file names
+- prepare an graphene + 1 atom example
+- run calculations for graphene with two different atoms in the same script
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
@@ -40,4 +42,9 @@
 ## 22/10/2020
 - Fixed and tested slab's *clear* method
 - tryed to run the simple simple but it raised an error
+
+## 24/10/2020
+- fixed simple example input error
+- started running simple example in the lab's computer
+- changed the return of *set_qe_calculation* method
 
