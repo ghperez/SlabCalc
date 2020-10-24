@@ -56,7 +56,7 @@ def set_calc(slab):
 		calc.cell_parameters_units = "alat"
 		calc.v1 = [3,0,0]
 		calc.v2 = [0,2*sqrt(3),0]
-		calc.v3 = [0,0,0]
+		calc.v3 = [0,0,10]
 		
 		# ATOMIC_SPECIES
 		calc.pseudopotential = ["C.pbe-rrkjus.UPF","H.pbe-rrkjus_psl.1.0.0.UPF"]
