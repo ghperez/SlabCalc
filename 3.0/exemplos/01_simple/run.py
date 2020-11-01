@@ -9,9 +9,12 @@ CMD = "mpirun -np 8 pw.x"
 SAVEOUT = True
 OUTFILE = "calc.out"
 SAVECOORDS = True
-COORDSFILE = "graphene_benzene_final_coords.xyz"
+COORDSFILE = "final_coords.xyz"
+
+PREFIX = "graph+hydrogen"
 
 a = 2.46 # surface cell parameter in angstroms
+n,m = 2,1 # surface repetition numbers
 
 def set_calc(slab):
 	calc = pw.calc()
@@ -24,7 +27,7 @@ def set_calc(slab):
 		calc.control["calculation"]   = "\"relax\""
 		calc.control["restart_mode"]  = "\"from_scratch\""
 		calc.control["pseudo_dir"]    = "\""+PSEUDO_DIR+"\""
-		calc.control["prefix"]        = "\"slabCalc_example1\""
+		calc.control["prefix"]        = "\"simple_example\""
 		calc.control["outdir"]        = "\"outputs\""
 		calc.control["etot_conv_thr"] = "1.0E-5"
 		calc.control["forc_conv_thr"] = "1.0D-4"
@@ -56,8 +59,8 @@ def set_calc(slab):
 		
 		# CELL_PARAMETERS
 		calc.cell_parameters_units = "alat"
-		calc.v1 = [3,0,0]
-		calc.v2 = [0,2*sqrt(3),0]
+		calc.v1 = [n,0,0]
+		calc.v2 = [0,m*sqrt(3),0]
 		calc.v3 = [0,0,10]
 		
 		# ATOMIC_SPECIES
@@ -75,14 +78,16 @@ def set_calc(slab):
 		calc.sk2 = 0
 		calc.sk3 = 0
 							
-	return slab.set_qe_calculation(calc)
+	slab.set_qe_calculation(calc)
+	
+	return calc
 	
 if __name__=="__main__":
 	
 	slab = Slab()
-	slab.readfromxyz("graphene_benzene.xyz")
+	slab.readfromxyz("%s.xyz"%PREFIX)
 	calc = set_calc(slab)
-	istring = calc.build_input(True,"graphene_benzene.in")
+	istring = calc.build_input(True,"%s.in"%PREFIX)
 	calc.run(CMD, istring, SAVEOUT, OUTFILE, SAVECOORDS, COORDSFILE)
 	
 	if calc.jobdone:

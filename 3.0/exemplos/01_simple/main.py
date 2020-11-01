@@ -17,14 +17,13 @@ if __name__=="__main__":
 	"""SETTING BUILDING OPTIONS"""
 	
 	# Selecting a surface and molecules
-	surface_file = "graphene_3x2.xyz"
-	molecule_file = "benzene.xyz"
+	surface_file = "graphene_2x1.xyz"
+	molecule_file = "hydrogen.xyz"
 	surface = create(SURFACES_DIR + surface_file)
 	molecule = create(MOLECULES_DIR + molecule_file)
 	
 	# Molecule's alocation parameters
-	inds = (14,21)
-	params = {       "site" : surface.get_coord_between(14,21), #get coordination between atoms indexes
+	params = {       "site" : surface.get_coord_between(5,2), #get coordination between atoms indexes
 		   	  "align_point" : molecule.centersym(), 
 		             "dist" : 3, #align distance between "site" in surface and "align_point" in molecule
 		         "rotation" : True,
@@ -41,6 +40,6 @@ if __name__=="__main__":
 	slab.build()
 
 	# Writing resulting structure to xyz file
-	slab.writexyz("graphene_benzene_test.xyz")
+	slab.writexyz("graphene_hydrogen.xyz")
 	
 	print("Done!")

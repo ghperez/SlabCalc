@@ -18,7 +18,7 @@ import os
 
 class mol3D(ms.mol3D):
 	"""
-	Redefinicao da classe mol3D para uso do slabCalc
+	Redefinicao da classe mol3D para uso no slabCalc
 	"""
 	def __init__(self):
 		super(mol3D, self).__init__()
@@ -49,19 +49,16 @@ class mol3D(ms.mol3D):
 		self.align_point = params["align_point"].copy()
 		
 		if "rotation" in params.keys() and params["rotation"]==True:
-			try:
-				self.rotation = True
-				self.angle    = params["angle"]
-				if "axis" in params.keys():
-					self.axis = params["axis"].copy()
-				else:
-					self.axis = [0,0,1]
-				if "rpoint" in params.keys():
-					self.rpoint = params["rpoint"].copy()
-				else:
-					self.rpoint = self.centersym()
-			except:
-				pass
+			self.rotation = True
+			self.angle    = params["angle"]
+			if "axis" in params.keys():
+				self.axis = params["axis"].copy()
+			else:
+				self.axis = [0,0,1]
+			if "rpoint" in params.keys():
+				self.rpoint = params["rpoint"].copy()
+			else:
+				self.rpoint = self.centersym()
 		else:
 			self.rotation = False 
 			self.angle    = None
@@ -193,8 +190,29 @@ class Slab(mol3D,object):
 
 		calc.system["nat"] = len(self.atoms)
 		calc.system["ntyp"] = len(calc.atomic_species)
-        
-		return calc
+		
+	def set_qe_parameters(self,params):
+		"""
+		"""
+		self.saveinp    = False
+		self.inpfile    = None
+		self.saveout    = False
+		self.outfile    = None
+		self.savecoords = False
+		self.coordsfile = None
+		
+		if "saveinp" in params.keys():
+			self.saveinp = params["saveinp"]
+			if "inpfile" in params.keys():
+				self.inpfile = params["inpfile"]
+		if "saveout" in params.keys():
+			self.saveout = params["saveout"]
+			if "outfile" in params.keys():
+				self.outfile = params["outfile"]
+		if "savecoords" in params.keys():
+			self.savecoords = params["savecoords"]
+			if "coordsfile" in params.keys():
+				self.coordsfile = params["coordsfile"]
     
 	def copy(self):
 		"""
@@ -212,13 +230,13 @@ class Slab(mol3D,object):
 		"""
 		Return a copy of molecules list
 		"""
-		copy_molecules = list()
+		molecules_copy = list()
 		if len(self.molecules)!=0:
 			for m in self.molecules:
 				copymol = mol3D()
 				copymol.copymol3D(m)
-				copy_molecules.append(copymol)
-		return copy_molecules
+				molecules_copy.append(copymol)
+		return molecules_copy
 
 	def clear(self):
 		"""

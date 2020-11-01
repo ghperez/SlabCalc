@@ -1,11 +1,11 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- test new set_calculation method
-- remove calculations methods of Sim object (?)
+- adapt checkpoints functionality from version 2.0 to this version (pickle vs json)
+- test methods implemented from date 24/10
+- prepare an graphene + 1 atom example (run simple and batch)
 - run batch_simulation example in Titanio's cluster for graphene+benzene
-- prepare an graphene + 1 atom example
-- run calculations for graphene with two different atoms in the same script
+- fix the documentation
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
@@ -48,3 +48,10 @@
 - started running simple example in the lab's computer
 - changed the return of *set_qe_calculation* method
 
+## 25/10/2020
+- implemented *Sim's* methods *run_qe_calculations* and *calculate_slabs* for running QE calculations and getting the energies
+- implemented *Slab's* method set_qe_parameters
+- changed the way *Sim's* *create_slabs* method read dictionaries (remove .pop structure)
+
+## 01/11/2020
+- implemented checkpoints funcionality using pickle module (methods *save()* and *load()*)
