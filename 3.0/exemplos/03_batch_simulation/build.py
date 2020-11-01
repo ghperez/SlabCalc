@@ -1,13 +1,12 @@
 from slabCalc.simulation import *
 from slabCalc import *
+import numpy as np
 import os
 
 SURFACES_DIR  = os.path.join("..","surfaces","")
 MOLECULES_DIR = os.path.join("..","molecules","")
 
-HC_DIR = os.path.join("hexagon_center","")
-AA_DIR = os.path.join("above_atom","")
-AB_DIR = os.path.join("above_bond","")
+STRUC_DIR = os.path.join("structures","")
 
 def create(fname):
 	"""
@@ -18,7 +17,7 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	dirs = ["hexagon_center","above_atom","above_bond"]
+	dirs = ["structures"]
 	
 	for i in dirs:
 		if i not in os.listdir("."):
@@ -30,36 +29,29 @@ if __name__=="__main__":
 	"""SETTING BUILDING OPTIONS"""
 	
 	# Selecting a surface and molecules
-	surface_file = "graphene_7x4.xyz"
-	molecule_file = "cu_phthalocyanine.xyz"
+	surface_file = "graphene_2x1.xyz"
+	molecule_file = "hydrogen.xyz"
 	surface = create(SURFACES_DIR + surface_file)
 	molecule = create(MOLECULES_DIR + molecule_file)
 	
 	# Molecule's alocation parameters
-	
 	params = list()
 	
 	# Defining sites
-	hc_site = surface.get_coord_between(40,55) #hexagon center site
-	aa_site = surface.get_coord_between(55) #above atom site
-	ab_site = surface.get_coord_between(55,56) #above bond site
-	sites = [hc_site,aa_site,ab_site]
+	site = surface.get_coord_between(2,5) #hexagon center site
 	
-	# Defining rotational parameters
-	angles = [0, 15, 30, 45]
+	# Defining align distances
+	dists = np.linspace(3,5,4)
 	
 	# Filling the params list
-	for s in sites:
-		for a in angles:
-			iparam = {    "surface" : surface,
-						 "molecule" : molecule,
-							 "site" : s,
-				   	  "align_point" : molecule.centersym(), 
-						     "dist" : 3,
-						 "rotation" : True,
-						    "angle" : a
-					 }
-			params.append(iparam)
+	for d in dists:
+		iparam = {    "surface" : surface,
+					 "molecule" : molecule,
+						 "site" : site,
+			   	  "align_point" : molecule.centersym(), 
+					     "dist" : d
+				 }
+		params.append(iparam)
 		      
 	"""BUILDING"""
 	
@@ -69,17 +61,10 @@ if __name__=="__main__":
 	# Building
 	sim.create_slabs(params)
 	
-	sim.build_slabs(silent=True)
+	sim.build_slabs()
 	
 	# Writing resulting structure to xyz file
 	for slab in sim.slabs:
-		slabpath = "%.0f.xyz"%(slab.molecules[0].angle)
-		if slab.molecules[0].site==hc_site:
-			slabpath = HC_DIR + slabpath
-		elif slab.molecules[0].site==aa_site:
-			slabpath = AA_DIR + slabpath
-		elif slab.molecules[0].site==ab_site:
-			slabpath = AB_DIR + slabpath
-		slab.writexyz(slabpath)
+		slab.writexyz(STRUC_DIR+"%.2f.xyz"%slab.molecule.dist)
 	
 	print("Done!")

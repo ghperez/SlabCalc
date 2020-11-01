@@ -1,7 +1,6 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- adapt checkpoints functionality from version 2.0 to this version (pickle vs json)
 - test methods implemented from date 24/10
 - prepare an graphene + 1 atom example (run simple and batch)
 - run batch_simulation example in Titanio's cluster for graphene+benzene
