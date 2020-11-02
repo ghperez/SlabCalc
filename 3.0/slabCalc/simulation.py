@@ -21,7 +21,8 @@ class Sim(object):
 	def __init__(self):
 		"""
 		"""
-		self.slabs      = list()
+		self.slabs = list()
+		self.dat   = list()
         
 	def create_slabs(self,*params):
 		"""
@@ -32,78 +33,109 @@ class Sim(object):
 			
 		for i in range(len(params)):
 			iparams = params[i].copy()
-			surface = iparams["surface"]#.pop("surface")
-			molecule = iparams["molecule"]
+			surface = iparams.pop("surface")
+			
 			cell_vector = None
 			extents = None
 			if "cell_vector" in iparams.keys():
 				cell_vector = iparams["cell_vector"] 
 			elif "extents" in iparams.keys():
-				extents = iparams["extents"] 
-					
-			molecule.set_molecule_parameters(iparams)
+				extents = iparams["extents"]
 			
-			islab = Slab(surface,molecule,cell_vector=cell_vector,extents=extents)
-			islab.set_qe_parameters(iparams)
-		
+			molecules = list()	 
+			for molecule in iparams.pop("molecules"):
+				molecule.set_molecule_parameters(iparams)
+				molecules.append(molecule)
+				
+			self.dat.append(iparams)
+			self._set_qe_params(i)
+				
+			islab = Slab(surface,molecules,cell_vector=cell_vector,extents=extents)
+			
 			self.slabs.append(islab.copy())
 			
 	def build_slabs(self,silent=False):
 		"""
 		"""
-		for slab in self.slabs:
-			slab.build(silent=silent)
+		for i in range(len(self.slabs)):
+			self.slabs[i].build(silent=silent)
+			self.dat[i]["status"] = "not calculated"
 		if not silent:
 			print("All slabs built!")
 
-	def run_qe_calculations(self,calc,calculate=False,cmd=None,silent=False):
+	def set_qe(self,calc):
 		"""
 		"""
 		for i in range(len(self.slabs)):
-		
-			saveinp = self.slabs[i].saveinp
-			inpfile = self.slabs[i].inpfile
+			self.dat[i]["calc"] = self.slabs[i].set_qe_calculation(calc)
+			
+	def run_qe(self,cmd,silent=False,save_when_done=False,savefile=None):
+		"""
+		"""
+		for i in range(len(self.slabs)):
+			saveinp = self.dat[i]["saveinp"]
+			inpfile = self.dat[i]["inpfile"]
 			
 			if saveinp and inpfile==None:
 				inpfile = "slab%i.in"%(i+1)
-			
-			self.slabs[i].set_qe_calculation(calc)
+		
+			calc = self.dat[i]["calc"]
+			if self.dat[i]["status"]=="calculated":
+				if not silent:
+					print("Slab %i already calculated!"%(i+1))
+				continue
+			elif self.dat[i]["status"]=="paused":
+				calc.system["restart_mode"] = "\"restart\""
+				
 			input_string = calc.build_input(saveinp,inpfile)
 			
-			if calculate:
-				if self.slabs[i].status=="calculated":
-					if not silent:
-						print("Slab %i already calculated!"%(i+1))
-				else:
-					self.save()
-					self.calculate_slab(i,cmd,calc,input_string)
+			self.calculate_slab(i,cmd,calc,input_string,save=True,savefile="temp.pickle")
+			
+		if save_when_done:
+			self.save(savefile)
 				 
-	def calculate_slab(self,i,cmd,calc,input_string):
+	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile=None):
 		"""
 		"""
-		saveout    = self.slabs[i].saveout
-		outfile    = self.slabs[i].outfile
-		savecoords = self.slabs[i].savecoords
-		coordsfile = self.slabs[i].coordsfile
+		saveout    = self.dat[i]["saveout"]
+		outfile    = self.dat[i]["outfile"]
+		savecoords = self.dat[i]["savecoords"]
+		coordsfile = self.dat[i]["coordsfile"]
 		
 		if saveout and outfile==None:
 			outfile = "slab%i.out"%(i+1)
 		if savecoords and coordsfile==None:
 			coordsfile = "slab%i_final_coords.xyz"%(i+1)
 			
+		self.dat[i]["status"]="paused"
 		out  = calc.run(CMD, input_string, saveout, outfile, savecoords, coordsfile)
 		
 		if out.jobdone:
 			try:
-				self.slabs[i].out = out
-				self.slabs[i].status = "calculated"
+				self.dat[i]["output"] = out
+				self.dat[i]["status"] = "calculated"
 			except:
 				print("!!! Error while calculating slab %i energy"%(i+1))
+		if save_steps:
+			self.save(savefile)
 				
-	def save(self,fname="sim.pickle"):
-		with open(fname,"wb") as pickle_out:
-			pickle.dump(self.slabs,pickle_out)
-		
-	def load(self,fname="sim.pickle"):
-		with open(fname,"rb") as pickle_in:
-			pickle.load(pickle_in)
+	def save(self,fname="sim.dat"):
+		"""
+		"""
+		with open(fname,"wb") as f:
+			pickle.dump(self.dat, f)
+			
+	def load(self,fname="sim.dat"):
+		"""
+		"""
+		with open(fname,"rb") as f:
+			self.dat = pickle.load(f)
+			
+	def _set_qe_params(self,i):
+		"""
+		"""
+		params = ["saveinp","inpfile","saveout",
+				  "outfile","savecoords","coordsfile"]
+		for p in params:
+			if p not in self.dat[i].keys():
+				self.dat[i][p] = None

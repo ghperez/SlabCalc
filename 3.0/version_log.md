@@ -1,9 +1,9 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- test methods implemented from date 24/10
 - prepare an graphene + 1 atom example (run simple and batch)
 - run batch_simulation example in Titanio's cluster for graphene+benzene
+- implement script for checking the calculations
 - fix the documentation
 
 ## 11/10/2020
@@ -45,7 +45,7 @@
 ## 24/10/2020
 - fixed simple example input error
 - started running simple example in the lab's computer
-- changed the return of *set_qe_calculation* method
+- changed the return of Slab's *set_qe_calculation* method
 
 ## 25/10/2020
 - implemented *Sim's* methods *run_qe_calculations* and *calculate_slabs* for running QE calculations and getting the energies
@@ -54,3 +54,14 @@
 
 ## 01/11/2020
 - implemented checkpoints funcionality using pickle module (methods *save()* and *load()*)
+- checkpoints with pickle doesn't work :( (TypeError: can't pickle SwigPyObject objects)
+- reported error while creating slabs using Sim
+- fixed error when copying slab's molecules
+
+## 02/11/2020
+- used *deepcopy()* function from library **copy** to clone *pw.calc()* objects
+- used serialization of dictionaries with pickle to save the simulations
+- implemented *save()* and *load()* methods for *Sim*
+- split Sim's *run_qe_calculations* into *set_qe* and *run_qe* methods
+
+

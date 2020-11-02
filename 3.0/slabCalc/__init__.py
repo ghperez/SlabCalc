@@ -13,6 +13,7 @@ instituição: Universidade Federal do ABC (UFABC)
 from molSimplify.Scripts.cellbuilder_tools import*
 from molSimplify.Scripts.cellbuilder import*
 import molSimplify.Classes.mol3D as ms
+from copy import deepcopy
 import qe.pw as pw
 import os
 
@@ -22,13 +23,13 @@ class mol3D(ms.mol3D):
 	"""
 	def __init__(self):
 		super(mol3D, self).__init__()
-		self.site = None
-		self.align_point = None
+		self.site = list()
+		self.align_point = list()
 		self.dist = None
 		self.rotation = None
 		self.angle = None
-		self.axis = None
-		self.rpoint = None
+		self.axis = list()
+		self.rpoint = list()
 		
 	def set_molecule_parameters(self,params):
 		"""
@@ -59,23 +60,16 @@ class mol3D(ms.mol3D):
 				self.rpoint = params["rpoint"].copy()
 			else:
 				self.rpoint = self.centersym()
-		else:
-			self.rotation = False 
-			self.angle    = None
-			self.axis     = None
-			self.rpoint   = None
 		
 	def get_coord_between(self,*inds):
 		if type(inds[0])==list or type(inds[0])==tuple:
 			inds = inds[0]
 		return center_of_sym([self.getAtom(i).coords() for i in inds])
 		
-	def copymol3D(self,other):
+	def copymol3D(self,other,copymols=False):
 		super(mol3D, self).copymol3D(other)
-		try:
+		if copymols:
 			self.copy_molecule_parameters(other)
-		except:
-			pass
 		
 	def copy_molecule_parameters(self,other):
 		params = {       "site" : other.site.copy(),
@@ -86,6 +80,7 @@ class mol3D(ms.mol3D):
 		   		         "axis" : other.axis.copy(),
 		   		       "rpoint" : other.rpoint.copy()
 				 }
+				 
 		self.set_molecule_parameters(params)
 
 class Slab(mol3D,object):
@@ -111,8 +106,8 @@ class Slab(mol3D,object):
 		"""
 		super(Slab, self).__init__()
 		
-		if type(molecules)==tuple:
-			self.molecules = list(molecules)
+		if type(molecules)==tuple and len(molecules)!=0:
+			self.molecules = molecules[0]
 		
 		if surface==None:
 			self.surface = mol3D()
@@ -145,7 +140,7 @@ class Slab(mol3D,object):
 		for i in range(len(self.molecules)):
 			# INITIALISING THE PAYLOAD MOLECULE
 			payload = mol3D()
-			payload.copymol3D(self.molecules[i])
+			payload.copymol3D(self.molecules[i],copymols=True)
 			# ROTATION
 			if payload.rotation==True and payload.angle!=0:
 				try:
@@ -162,7 +157,7 @@ class Slab(mol3D,object):
 				# COMBINING MOLECULE AND SURFACE INTO SLAB
 				cslab.combine(payload)
 			except:
-				print("\n!!! Error while building molecule %d !!!\nPlease, check the molecule parameters.\n"%(i+1))
+				print("\n!!! Error while inserting molecule %d !!!\nPlease, check the molecule parameters.\n"%(i+1))
 			# CHECKING SANITY
 			self.sanity = self.sanitycheck(silence=True)
 			if self.sanity[0] and not silent:
@@ -172,47 +167,28 @@ class Slab(mol3D,object):
 		if not silent:
 			print("Slab built")
 
-	def set_qe_calculation(self,calc):
+	def set_qe_calculation(self,in_calc):
 		"""
         Retorna um input do Quantum Espresso em formato de string confome um
         um objeto calc pré-configurado
         
         (object) calc      : objeto da biblioteca QE
 		"""
+		out_calc = deepcopy(in_calc)
+		
 		for atom in self.atoms:
-			calc.x.append(atom.coords()[0])
-			calc.y.append(atom.coords()[1])
-			calc.z.append(atom.coords()[2])
-			calc.atom_type.append(atom.symbol())
-			if atom.symbol() not in calc.atomic_species:
-				calc.atomic_mass.append(atom.mass)
-				calc.atomic_species.append(atom.symbol())
+			out_calc.x.append(atom.coords()[0])
+			out_calc.y.append(atom.coords()[1])
+			out_calc.z.append(atom.coords()[2])
+			out_calc.atom_type.append(atom.symbol())
+			if atom.symbol() not in out_calc.atomic_species:
+				out_calc.atomic_mass.append(atom.mass)
+				out_calc.atomic_species.append(atom.symbol())
 
-		calc.system["nat"] = len(self.atoms)
-		calc.system["ntyp"] = len(calc.atomic_species)
+		out_calc.system["nat"] = len(self.atoms)
+		out_calc.system["ntyp"] = len(out_calc.atomic_species)
 		
-	def set_qe_parameters(self,params):
-		"""
-		"""
-		self.saveinp    = False
-		self.inpfile    = None
-		self.saveout    = False
-		self.outfile    = None
-		self.savecoords = False
-		self.coordsfile = None
-		
-		if "saveinp" in params.keys():
-			self.saveinp = params["saveinp"]
-			if "inpfile" in params.keys():
-				self.inpfile = params["inpfile"]
-		if "saveout" in params.keys():
-			self.saveout = params["saveout"]
-			if "outfile" in params.keys():
-				self.outfile = params["outfile"]
-		if "savecoords" in params.keys():
-			self.savecoords = params["savecoords"]
-			if "coordsfile" in params.keys():
-				self.coordsfile = params["coordsfile"]
+		return out_calc
     
 	def copy(self):
 		"""
@@ -234,8 +210,9 @@ class Slab(mol3D,object):
 		if len(self.molecules)!=0:
 			for m in self.molecules:
 				copymol = mol3D()
-				copymol.copymol3D(m)
+				copymol.copymol3D(m,copymols=True)
 				molecules_copy.append(copymol)
+				
 		return molecules_copy
 
 	def clear(self):

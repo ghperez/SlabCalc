@@ -1,6 +1,5 @@
 from slabCalc.simulation import *
 from slabCalc import *
-import numpy as np
 import os
 
 SURFACES_DIR  = os.path.join("..","surfaces","")
@@ -41,16 +40,17 @@ if __name__=="__main__":
 	site = surface.get_coord_between(2,5) #hexagon center site
 	
 	# Defining align distances
-	dists = np.linspace(3,5,4)
+	dists = [3,4,5]
 	
 	# Filling the params list
 	for d in dists:
 		iparam = {    "surface" : surface,
-					 "molecule" : molecule,
+					"molecules" : [molecule],
 						 "site" : site,
 			   	  "align_point" : molecule.centersym(), 
 					     "dist" : d
 				 }
+		
 		params.append(iparam)
 		      
 	"""BUILDING"""
@@ -61,10 +61,10 @@ if __name__=="__main__":
 	# Building
 	sim.create_slabs(params)
 	
-	sim.build_slabs()
+	sim.build_slabs(silent=True)
 	
 	# Writing resulting structure to xyz file
 	for slab in sim.slabs:
-		slab.writexyz(STRUC_DIR+"%.2f.xyz"%slab.molecule.dist)
+		slab.writexyz(STRUC_DIR+"%.0f.xyz"%slab.molecules[0].dist)
 	
 	print("Done!")
