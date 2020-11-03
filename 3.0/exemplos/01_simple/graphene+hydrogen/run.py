@@ -78,7 +78,7 @@ def set_calc(slab):
 		calc.sk2 = 0
 		calc.sk3 = 0
 							
-	slab.set_qe_calculation(calc)
+	calc = slab.set_qe_calculation(calc)
 	
 	return calc
 	
