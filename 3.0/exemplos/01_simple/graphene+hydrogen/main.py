@@ -3,6 +3,7 @@ import os
 
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
+PREFIX = "graph+hydrogen"
 
 def create(fname):
 	"""
@@ -40,6 +41,6 @@ if __name__=="__main__":
 	slab.build()
 
 	# Writing resulting structure to xyz file
-	slab.writexyz("graphene_hydrogen.xyz")
+	slab.writexyz("%s.xyz"%PREFIX)
 	
 	print("Done!")
