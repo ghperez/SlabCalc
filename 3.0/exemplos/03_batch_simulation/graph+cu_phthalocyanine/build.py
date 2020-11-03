@@ -52,7 +52,7 @@ if __name__=="__main__":
 	for s in sites:
 		for a in angles:
 			iparam = {    "surface" : surface,
-						 "molecule" : molecule,
+						"molecules" : molecule,
 							 "site" : s,
 				   	  "align_point" : molecule.centersym(), 
 						     "dist" : 3,
