@@ -106,8 +106,10 @@ class Slab(mol3D,object):
 		"""
 		super(Slab, self).__init__()
 		
-		if type(molecules)==tuple and len(molecules)!=0:
-			self.molecules = molecules[0]
+		self.molecules = list(molecules)
+		if len(self.molecules)!=0:
+			while type(self.molecules[0])!=mol3D:
+				self.molecules = self.molecules[0]
 		
 		if surface==None:
 			self.surface = mol3D()

@@ -69,7 +69,7 @@ class Sim(object):
 		for i in range(len(self.slabs)):
 			self.dat[i]["calc"] = self.slabs[i].set_qe_calculation(calc)
 			
-	def run_qe(self,cmd,silent=False):
+	def run_qe(self,cmd,silent=False,save_when_done=False,savefile=None):
 		"""
 		"""
 		for i in range(len(self.slabs)):
@@ -89,7 +89,10 @@ class Sim(object):
 				
 			input_string = calc.build_input(saveinp,inpfile)
 			
-			#self.calculate_slab(i,cmd,calc,input_string,save=True)
+			self.calculate_slab(i,cmd,calc,input_string,save_steps=True,savefile="temp.pickle")
+			
+		if save_when_done:
+			self.save(savefile)
 				 
 	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile=None):
 		"""
@@ -105,7 +108,7 @@ class Sim(object):
 			coordsfile = "slab%i_final_coords.xyz"%(i+1)
 			
 		self.dat[i]["status"]="paused"
-		out  = calc.run(CMD, input_string, saveout, outfile, savecoords, coordsfile)
+		out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
 		
 		if out.jobdone:
 			try:
@@ -121,6 +124,12 @@ class Sim(object):
 		"""
 		with open(fname,"wb") as f:
 			pickle.dump(self.dat, f)
+			
+	def load(self,fname="sim.dat"):
+		"""
+		"""
+		with open(fname,"rb") as f:
+			self.dat = pickle.load(f)
 			
 	def _set_qe_params(self,i):
 		"""
