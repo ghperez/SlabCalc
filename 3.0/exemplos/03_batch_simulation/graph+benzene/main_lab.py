@@ -7,7 +7,7 @@ import os
 
 PREFIX = "graph+benzene"
 
-# BUILDING ROUTINE GLOBAL VARIABLES
+# BUILDING ROUTINE GLOBAL SETTINGS
 BUILD = True
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
@@ -16,17 +16,17 @@ HC_DIR = os.path.join("hexagon_center","")
 AA_DIR = os.path.join("above_atom","")
 AB_DIR = os.path.join("above_bond","")
 
-# CALCULATION GLOBAL VARIABLES
+FINAL_COORDS_DIR = os.path.join("final_coords","")
+INPUTS_DIR = os.path.join("inputs","")
+OUT_DIR = os.path.join("outs","")
+
+# CALCULATION GLOBAL SETTINGS
 NP = 8 # number of processors
 CALCULATE = True
 PSEUDO_DIR  = os.path.join("..","..","pseudopotentials","")
 CALC_FROM_INPUT = False
 INPUT_MODEL = "input_model"
 CMD = "mpirun -np %d pw.x"%NP
-SAVEOUT = True
-OUTFILE = "calc.out"
-SAVECOORDS = True
-COORDSFILE = "final_coords.xyz"
 
 a = 2.46 # surface cell parameter in angstroms
 n,m = 3,2 # surface repetition numbers
@@ -40,7 +40,8 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	dirs = ["hexagon_center", "above_atom", "above_bond"]
+	dirs = ["hexagon_center", "above_atom", "above_bond",
+			"final_coords","inputs","outs"]
 	
 	for i in dirs:
 		if i not in os.listdir("."):
@@ -145,7 +146,13 @@ def build_structures():
 				   	  "align_point" : molecule.centersym(), 
 						     "dist" : 3,
 						 "rotation" : True,
-						    "angle" : a
+						    "angle" : a,
+						  "saveinp" : True,
+						  "inpfile" : INPUTS_DIR+"%d.in"%a,
+						  "saveout" : True,
+						  "outfile" : OUT_DIR+"%d.out"%a,
+					   "savecoords" : True,
+					   "coordsfile" : FINAL_COORDS_DIR+"%d.xyz"%a
 					 }
 			params.append(iparam)
 		      

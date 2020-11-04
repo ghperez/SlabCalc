@@ -14,6 +14,10 @@ HC_DIR = os.path.join("hexagon_center","")
 AA_DIR = os.path.join("above_atom","")
 AB_DIR = os.path.join("above_bond","")
 
+FINAL_COORDS_DIR = os.path.join("final_coords","")
+INPUTS_DIR = os.path.join("inputs","")
+OUT_DIR = os.path.join("outs","")
+
 # CALCULATION GLOBAL VARIABLES
 NP = 128 # number of processors
 CALCULATE = True
@@ -38,11 +42,16 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	dirs = ["hexagon_center", "above_atom", "above_bond"]
+	outer_dirs = [HC_DIR, AA_DIR, AB_DIR]
+	inner_dirs = ["final_coords","inputs","outs"]
 	
-	for i in dirs:
-		if i not in os.listdir("."):
-			os.mkdir(i)
+	
+	for o in outer_dirs:
+		if o not in os.listdir("."):
+			os.mkdir(o)
+		for i in inner_dirs:
+			if i not in os.listdir(o):
+				os.mkdir(o+i)
 
 def set_calc():
 	calc = pw.calc()
@@ -124,7 +133,7 @@ def build_structures():
 	hc_site = surface.get_coord_between(4,11) #hexagon center site
 	aa_site = surface.get_coord_between(11) #above atom site
 	ab_site = surface.get_coord_between(11,12) #above bond site
-	sites = [hc_site,aa_site,ab_site]
+	sites = [ hc_site, aa_site, ab_site]
 	
 	# Defining align distances
 	angles = [0, 15, 30, 45]
@@ -135,20 +144,29 @@ def build_structures():
 			# Label slabs according to site
 			if s==hc_site:
 				label = "hexagon_center"
+				site_dir = HC_DIR
 			elif s==aa_site:
 				label = "above_atom"
+				site_dir = AA_DIR
 			elif s==ab_site:
 				label = "above_bond"
+				site_dir = AB_DIR
 		
-			iparam = {    "surface" : surface,
+			iparam= {     "surface" : surface,
 						"molecules" : [molecule],
 							 "site" : s,
 							"label" : label,
 				   	  "align_point" : molecule.centersym(), 
 						     "dist" : 3,
 						 "rotation" : True,
-						    "angle" : a
-					 }
+						    "angle" : a,
+					      "saveinp" : True,
+						  "inpfile" : site_dir+INPUTS_DIR+"%d.in"%(a),
+						  "saveout" : True,
+						  "outfile" : site_dir+OUT_DIR+"%d.out"%(a),
+					   "savecoords" : True,
+					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%d.xyz"%(a)
+					}
 			params.append(iparam)
 		      
 	"""BUILDING"""

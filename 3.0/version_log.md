@@ -1,10 +1,10 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- prepare an graphene + 1 atom example (run simple and batch)
-- run batch_simulation example in Titanio's cluster for graphene+benzene
+- not creating temp files (?)
 - implement script for checking the calculations
 - fix the documentation
+- follow the state of Titanio's and Lab's calculations
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
@@ -64,4 +64,6 @@
 - implemented *save()* and *load()* methods for *Sim*
 - split Sim's *run_qe_calculations* into *set_qe* and *run_qe* methods
 
-
+- fixed bug when reading molecules in *Slab*'s \_\_init\_\_ method
+- prepared&run simple and batch examples for graphene+hydrogen in lab's computer (results at examples folder)
+- prepared&run batch example for graphene+benzene in Titanio cluster (waiting for results) 
