@@ -40,8 +40,7 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	dirs = ["hexagon_center", "above_atom", "above_bond",
-			"final_coords","inputs","outs"]
+	dirs = ["hexagon_center", "final_coords", "inputs", "outs"]
 	
 	for i in dirs:
 		if i not in os.listdir("."):
@@ -125,8 +124,6 @@ def build_structures():
 	
 	# Defining sites
 	hc_site = surface.get_coord_between(4,11) #hexagon center site
-	#aa_site = surface.get_coord_between(11) #above atom site
-	#ab_site = surface.get_coord_between(11,12) #above bond site
 	sites = [hc_site]
 	
 	# Defining align distances
@@ -164,7 +161,7 @@ def build_structures():
 	# Building
 	sim.create_slabs(params)
 	
-	sim.build_slabs(silent=True)
+	sim.build_slabs()
 	
 	#Writing resulting structure to xyz file
 	for slab in sim.slabs:
@@ -182,6 +179,7 @@ if __name__=="__main__":
 	make_dirs()
 	
 	#Building Routine
+	print(">>> Starting building routine")
 	if BUILD:
 		sim = build_structures()
 	else:
@@ -189,6 +187,7 @@ if __name__=="__main__":
 		sim.load()
 	
 	#Calculations
+	print(">>> Starting Calculation Routine")
 	if CALCULATE:
 		calc = set_calc()
 		sim.set_qe(calc)
@@ -196,4 +195,4 @@ if __name__=="__main__":
 		
 	sim.save()
 	
-	print("Done!")
+	print(">>> Done!")

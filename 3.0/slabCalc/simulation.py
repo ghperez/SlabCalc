@@ -109,14 +109,17 @@ class Sim(object):
 			coordsfile = "slab%i_final_coords.xyz"%(i+1)
 			
 		self.dat[i]["status"]="paused"
-		out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
 		
-		if out.jobdone:
-			try:
+		try:
+			out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
+			if out.jobdone:
 				self.dat[i]["output"] = out
 				self.dat[i]["status"] = "calculated"
-			except:
-				print("!!! Error while calculating slab %i energy"%(i+1))
+			else:
+				print("!!! Job not done")
+		except:
+			print("!!! Error while calculating slab %i energy"%(i+1))
+			
 		if save_steps:
 			self.save(savefile)
 				
