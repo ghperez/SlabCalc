@@ -12,6 +12,10 @@ BUILD = True
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
 
+HC_DIR = os.path.join("hexagon_center","")
+AA_DIR = os.path.join("above_atom","")
+AB_DIR = os.path.join("above_bond","")
+
 FINAL_COORDS_DIR = os.path.join("final_coords","")
 INPUTS_DIR = os.path.join("inputs","")
 OUT_DIR = os.path.join("outs","")
