@@ -95,7 +95,7 @@ class Sim(object):
 		if save_when_done:
 			self.save(savefile)
 				 
-	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile=None):
+	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile="temp.pickle"):
 		"""
 		"""
 		saveout    = self.dat[i]["saveout"]
