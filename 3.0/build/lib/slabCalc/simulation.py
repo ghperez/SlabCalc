@@ -69,7 +69,7 @@ class Sim(object):
 		for i in range(len(self.slabs)):
 			self.dat[i]["calc"] = self.slabs[i].set_qe_calculation(calc)
 			
-	def run_qe(self,cmd,silent=False,save_when_done=True,savefile=None):
+	def run_qe(self,cmd,silent=False,save_when_done=True,savefile="sim.pickle"):
 		"""
 		"""
 		for i in range(len(self.slabs)):
@@ -95,7 +95,7 @@ class Sim(object):
 		if save_when_done:
 			self.save(savefile)
 				 
-	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile=None):
+	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile="temp.pickle"):
 		"""
 		"""
 		saveout    = self.dat[i]["saveout"]
@@ -109,14 +109,17 @@ class Sim(object):
 			coordsfile = "slab%i_final_coords.xyz"%(i+1)
 			
 		self.dat[i]["status"]="paused"
-		out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
 		
-		if out.jobdone:
-			try:
+		try:
+			out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
+			if out.jobdone:
 				self.dat[i]["output"] = out
 				self.dat[i]["status"] = "calculated"
-			except:
-				print("!!! Error while calculating slab %i energy"%(i+1))
+			else:
+				print("!!! Job not done")
+		except:
+			print("!!! Error while calculating slab %i energy"%(i+1))
+			
 		if save_steps:
 			self.save(savefile)
 				
