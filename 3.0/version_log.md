@@ -1,8 +1,7 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- not creating temp files (?)
-- implement script for checking the calculations
+- implement script for analysing the program outputs
 - fix the documentation
 - follow the state of Titanio's and Lab's calculations
 
@@ -66,4 +65,11 @@
 
 - fixed bug when reading molecules in *Slab*'s \_\_init\_\_ method
 - prepared&run simple and batch examples for graphene+hydrogen in lab's computer (results at examples folder)
-- prepared&run batch example for graphene+benzene in Titanio cluster (waiting for results) 
+- prepared&run batch example for graphene+benzene in Titanio cluster (waiting for results)
+
+## 25/11/2020
+- prepared&run batch example for graphene+benzene in lab's computer (waiting for results)
+- prepared&run again (first run raised some error which was fixed) batch example for graphene+benzene in Titanio cluster (waiting for results)
+
+## 27/11/2020
+- detected bug in run_qe method of Sim class: raises error if temp.pickle not in the current directory

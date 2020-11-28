@@ -66,8 +66,8 @@ def set_calc():
 		# &SYSTEM
 		calc.system["ibrav"]       = 0
 		calc.system["celldm(1)"]   = a*1.889725989 # cell parameter in bohr
-		#calc.system["nat"]         =
-		#calc.system["ntyp"]        =
+		#calc.system["nat"]        =
+		#calc.system["ntyp"]       =
 		calc.system["nspin"]       = 1
 		calc.system["occupations"] = "\"smearing\""
 		calc.system["degauss"]     = 0.02
