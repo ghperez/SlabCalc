@@ -8,7 +8,7 @@ LOAD = False
 LOAD_FILE = "temp.pickle"
 
 # BUILDING ROUTINE GLOBAL VARIABLES
-BUILD = False 
+BUILD = False
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
 
@@ -52,7 +52,7 @@ def make_dirs():
 			os.mkdir(o)
 		for i in inner_dirs:
 			if i not in os.listdir(o):
-				os.mkdir(o+i)
+				os.mkdir(o+"/"+i)
 
 def set_calc():
 	calc = pw.calc()
@@ -192,9 +192,7 @@ def build_structures():
 		elif slab.molecules[0].site==ab_site:
 			slabpath = AB_DIR + slabpath
 		slab.writexyz(slabpath)
-		
-	sim.save("built.pickle")
-	
+			
 	return sim
 	
 if __name__=="__main__":
@@ -204,6 +202,9 @@ if __name__=="__main__":
 	#Building Routine
 	if BUILD:
 		sim = build_structures()
+		calc = set_calc()
+		sim.set_qe(calc)
+		sim.save("built.pickle")
 	else:
 		sim = Sim()
 		if LOAD:
@@ -213,8 +214,6 @@ if __name__=="__main__":
 	
 	#Calculations
 	if CALCULATE:
-		calc = set_calc()
-		sim.set_qe(calc)
 		sim.run_qe(cmd=CMD)
 		sim.save("results.dat")
 		

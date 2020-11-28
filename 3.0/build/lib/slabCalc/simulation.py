@@ -72,7 +72,7 @@ class Sim(object):
 	def run_qe(self,cmd,silent=False,save_when_done=True,savefile="sim.pickle"):
 		"""
 		"""
-		for i in range(len(self.slabs)):
+		for i in range(len(self.dat)):
 			saveinp = self.dat[i]["saveinp"]
 			inpfile = self.dat[i]["inpfile"]
 			
@@ -91,7 +91,8 @@ class Sim(object):
 			
 			self.calculate_slab(i,cmd,calc,input_string,save_steps=True,savefile="temp.pickle")
 			
-		os.remove("temp.pickle")
+		if "temp.pickle" in os.listdir("."):
+			os.remove("temp.pickle")
 		if save_when_done:
 			self.save(savefile)
 				 
