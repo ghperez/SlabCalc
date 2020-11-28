@@ -90,9 +90,9 @@ class Sim(object):
 			input_string = calc.build_input(saveinp,inpfile)
 			
 			self.calculate_slab(i,cmd,calc,input_string,save_steps=True,savefile="temp.pickle")
-        
-        if "temp.pickle" in os.listdir("."):
-            os.remove("temp.pickle")
+			
+		if "temp.pickle" in os.listdir("."):
+			os.remove("temp.pickle")
 		if save_when_done:
 			self.save(savefile)
 				 
