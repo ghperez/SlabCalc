@@ -4,9 +4,11 @@ import qe.pw as pw
 import os
 
 PREFIX = "graph+benzene"
+LOAD = False
+LOAD_FILE = "temp.pickle"
 
 # BUILDING ROUTINE GLOBAL VARIABLES
-BUILD = True
+BUILD = False 
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
 
@@ -20,7 +22,7 @@ OUT_DIR = os.path.join("outs","")
 
 # CALCULATION GLOBAL VARIABLES
 NP = 8 # number of processors
-CALCULATE = False
+CALCULATE = True 
 PSEUDO_DIR  = os.path.join("..","..","pseudopotentials","")
 CALC_FROM_INPUT = False
 INPUT_MODEL = "input_model"
@@ -42,9 +44,8 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	outer_dirs = [HC_DIR, AA_DIR, AB_DIR]
-	inner_dirs = ["final_coords","inputs","outs"]
-	
+	outer_dirs = ["hexagon_center", "above_atom", "above_bond"]
+	inner_dirs = ["final_coords","inputs","outs"]	
 	
 	for o in outer_dirs:
 		if o not in os.listdir("."):
@@ -192,7 +193,7 @@ def build_structures():
 			slabpath = AB_DIR + slabpath
 		slab.writexyz(slabpath)
 		
-	sim.save()
+	sim.save("built.pickle")
 	
 	return sim
 	
@@ -205,14 +206,16 @@ if __name__=="__main__":
 		sim = build_structures()
 	else:
 		sim = Sim()
-		sim.load()
+		if LOAD:
+			sim.load(LOAD_FILE)
+		else:
+			sim.load("built.pickle")	
 	
 	#Calculations
 	if CALCULATE:
 		calc = set_calc()
 		sim.set_qe(calc)
 		sim.run_qe(cmd=CMD)
+		sim.save("results.dat")
 		
-	sim.save()
-	
 	print("Done!")
