@@ -4,6 +4,8 @@ import qe.pw as pw
 import os
 
 PREFIX = "graph+benzene"
+LOAD = False
+LOAD_FILE = "temp.pickle"
 
 # BUILDING ROUTINE GLOBAL VARIABLES
 BUILD = True
@@ -25,10 +27,6 @@ PSEUDO_DIR  = os.path.join("..","..","pseudopotentials","")
 CALC_FROM_INPUT = False
 INPUT_MODEL = "input_model"
 CMD = "mpirun -np %d pw.x"%NP
-SAVEOUT = True
-OUTFILE = "calc.out"
-SAVECOORDS = True
-COORDSFILE = "final_coords.xyz"
 
 a = 2.46 # surface cell parameter in angstroms
 n,m = 3,2 # surface repetition numbers
@@ -199,18 +197,23 @@ if __name__=="__main__":
 	make_dirs()
 	
 	#Building Routine
+	print(">>> Starting building routine")
 	if BUILD:
 		sim = build_structures()
+		calc = set_calc()
+		sim.set_qe(calc)
+		sim.save("built.dat")
 	else:
 		sim = Sim()
-		sim.load()
+		if LOAD:
+			sim.load(LOAD_FILE)
+		else:
+			sim.load("built.dat")
 	
 	#Calculations
 	if CALCULATE:
-		calc = set_calc()
-		sim.set_qe(calc)
 		sim.run_qe(cmd=CMD)
-		
-	sim.save()
+		sim.run_qe(cmd=CMD)
+		sim.save("results.dat")
 	
-	print("Done!")
+	print("Finished simulation!")
