@@ -40,11 +40,16 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	dirs = ["hexagon_center", "above_atom", "above_bond", "final_coords", "inputs", "outs"]
+	outer_dirs = [HC_DIR[:-1], AA_DIR[:-1], AB_DIR[:-1]]
+	inner_dirs = ["final_coords","inputs","outs"]
 	
-	for i in dirs:
-		if i not in os.listdir("."):
-			os.mkdir(i)
+	for o in outer_dirs:
+		if o not in os.listdir("."):
+			os.mkdir(o)
+		for i in inner_dirs:
+			if i not in os.listdir(o):
+				path = os.path.join(o,i)
+				os.mkdir(path)
 
 def set_calc():
 	calc = pw.calc()
@@ -141,10 +146,13 @@ def build_structures():
 			# Label slabs according to site
 			if s==hc_site:
 				label = "hexagon_center"
-            else if s==aa_site:
-                label = "above_atom"
-            else if s==ab_site:
-                label = "above_bond"
+				site_dir = HC_DIR
+			elif s==aa_site:
+				label = "above_atom"
+				site_dir = AA_DIR
+			elif s==ab_site:
+				label = "above_bond"
+				site_dir = AB_DIR
 		
 			iparam = {    "surface" : surface,
 						"molecules" : molecules,
@@ -155,11 +163,11 @@ def build_structures():
 						 "rotation" : True,
 						    "angle" : a,
 						  "saveinp" : True,
-						  "inpfile" : INPUTS_DIR+"%d.in"%a,
+						  "inpfile" : site_dir+INPUTS_DIR+"%.2f.in"%a,
 						  "saveout" : True,
-						  "outfile" : OUT_DIR+"%d.out"%a,
+						  "outfile" : site_dir+OUT_DIR+"%.2f.out"%a,
 					   "savecoords" : True,
-					   "coordsfile" : FINAL_COORDS_DIR+"%d.xyz"%a
+					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%.2f.xyz"%a
 					 }
 			params.append(iparam)
 		      
@@ -175,13 +183,11 @@ def build_structures():
 	
 	#Writing resulting structure to xyz file
 	for slab in sim.slabs:
-		slabpath = "%d.xyz"%(slab.molecules[0].angle)
+		slabpath = "%.2f.xyz"%(slab.molecules[0].angle)
 		if slab.molecules[0].site==hc_site:
 			slabpath = HC_DIR + slabpath
 		slab.writexyz(slabpath)
 		
-	sim.save()
-	
 	return sim
 	
 if __name__=="__main__":
@@ -192,9 +198,15 @@ if __name__=="__main__":
 	print(">>> Starting building routine")
 	if BUILD:
 		sim = build_structures()
+		calc = set_calc()
+		sim.set_qe(calc)
+		sim.save("built.dat")
 	else:
 		sim = Sim()
-		sim.load()
+		if LOAD:
+			sim.load(LOAD_FILE)
+		else:
+			sim.load("built.dat")
 	
 	#Calculations
 	print(">>> Starting Calculation Routine")
@@ -202,7 +214,6 @@ if __name__=="__main__":
 		calc = set_calc()
 		sim.set_qe(calc)
 		sim.run_qe(cmd=CMD)
-		
-	sim.save()
+		sim.save("results.dat")
 	
 	print(">>> Done!")

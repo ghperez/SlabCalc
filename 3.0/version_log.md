@@ -1,8 +1,7 @@
 # SlabCalc3.0 Log
 
 ## TO-DOS
-- fix examples according to the ishues reported 27/11
-- implement script for analysing the program outputs
+- EXECUTE PROGRAMS IN UNBUFFER MODE (python -u script.py 1> out 2> err &)
 - fix the documentation
 - follow the state of Titanio's and Lab's calculations
 
@@ -75,3 +74,7 @@
 ## 27/11/2020
 - detected bug in run_qe method of Sim class: raises error if temp.pickle not in the current directory
 - fixed some ishues in graph+benz lab2 example
+
+## 28/11/2020
+- fixed all examples according to the ishues detected 27/11
+- implemented checkScript.py for fast check calculations

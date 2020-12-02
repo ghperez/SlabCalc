@@ -44,7 +44,7 @@ def create(fname):
 	return structure
 	
 def make_dirs():
-	outer_dirs = ["hexagon_center", "above_atom", "above_bond"]
+	outer_dirs = [HC_DIR[:-1], AA_DIR[:-1], AB_DIR[:-1]]
 	inner_dirs = ["final_coords","inputs","outs"]	
 	
 	for o in outer_dirs:
@@ -52,7 +52,8 @@ def make_dirs():
 			os.mkdir(o)
 		for i in inner_dirs:
 			if i not in os.listdir(o):
-				os.mkdir(o+"/"+i)
+				path = os.path.join(o,i)
+				os.mkdir(path)
 
 def set_calc():
 	calc = pw.calc()
@@ -164,11 +165,11 @@ def build_structures():
 						 "rotation" : True,
 						    "angle" : a,
 					      "saveinp" : True,
-						  "inpfile" : site_dir+INPUTS_DIR+"%d.in"%(a),
+						  "inpfile" : site_dir+INPUTS_DIR+"%.2f.in"%(a),
 						  "saveout" : True,
-						  "outfile" : site_dir+OUT_DIR+"%d.out"%(a),
+						  "outfile" : site_dir+OUT_DIR+"%.2f.out"%(a),
 					   "savecoords" : True,
-					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%d.xyz"%(a)
+					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%.2f.xyz"%(a)
 					}
 			params.append(iparam)
 		      
@@ -184,7 +185,7 @@ def build_structures():
 	
 	#Writing resulting structure to xyz file
 	for slab in sim.slabs:
-		slabpath = "%d.xyz"%(slab.molecules[0].angle)
+		slabpath = "%.2f.xyz"%(slab.molecules[0].angle)
 		if slab.molecules[0].site==hc_site:
 			slabpath = HC_DIR + slabpath
 		elif slab.molecules[0].site==aa_site:
@@ -204,13 +205,13 @@ if __name__=="__main__":
 		sim = build_structures()
 		calc = set_calc()
 		sim.set_qe(calc)
-		sim.save("built.pickle")
+		sim.save("built.dat")
 	else:
 		sim = Sim()
 		if LOAD:
 			sim.load(LOAD_FILE)
 		else:
-			sim.load("built.pickle")	
+			sim.load("built.dat")	
 	
 	#Calculations
 	if CALCULATE:
