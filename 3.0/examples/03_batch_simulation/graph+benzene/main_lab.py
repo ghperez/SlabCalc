@@ -4,8 +4,9 @@ import qe.pw as pw
 import os
 
 # FEITO PRA RODAR NO LAB COMO TESTE
-
 PREFIX = "graph+benzene"
+LOAD = False
+LOAD_FILE = "temp.pickle"
 
 # BUILDING ROUTINE GLOBAL SETTINGS
 BUILD = True
