@@ -8,5 +8,5 @@ cd $SLURM_SUBMIT_DIR
 
 export PYTHONPATH=/home/gabriel.perez/miniconda3/envs/molSimplify/bin/python
 
-python main.py $SLURM_NTASKS 1> calc.out 2> calc.err
+python -u main.py $SLURM_NTASKS 1> calc.out 2> calc.err
 
