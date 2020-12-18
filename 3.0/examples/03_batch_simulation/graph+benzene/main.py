@@ -212,8 +212,7 @@ if __name__=="__main__":
 	
 	#Calculations
 	if CALCULATE:
-		sim.run_qe(cmd=CMD)
-		sim.run_qe(cmd=CMD)
+		sim.run_qe(cmd=CMD,save_when_done=False)
 		sim.save("results.dat")
 	
 	print("Finished simulation!")

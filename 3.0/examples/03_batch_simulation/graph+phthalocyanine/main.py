@@ -3,12 +3,16 @@ from slabCalc import *
 import qe.pw as pw
 import os
 
-# FEITO PRA RODAR NO LAB COMO TESTE
-PREFIX = "graph+benzene"
+a = 2.46 # surface cell parameter in angstroms
+n,m = 7,4 # surface repetition numbers
+ALIGN_DISTANCE = 3
+ELEMENT = "Cu"
+ELEMENT_PSEUDO = "Cu.pbe-dn-rrkjus_psl.1.0.0.UPF"
+PREFIX = "graph+%s_phthalocyanine"%(ELEMENT.lower())
 LOAD = False
 LOAD_FILE = "temp.pickle"
 
-# BUILDING ROUTINE GLOBAL SETTINGS
+# BUILDING ROUTINE GLOBAL VARIABLES
 BUILD = True
 SURFACES_DIR  = os.path.join("..","..","surfaces","")
 MOLECULES_DIR = os.path.join("..","..","molecules","")
@@ -21,16 +25,14 @@ FINAL_COORDS_DIR = os.path.join("final_coords","")
 INPUTS_DIR = os.path.join("inputs","")
 OUT_DIR = os.path.join("outs","")
 
-# CALCULATION GLOBAL SETTINGS
-NP = 8 # number of processors
-CALCULATE = True
+# CALCULATION GLOBAL VARIABLES
+CALCULATE = False
+NP = 128 # number of processors
 PSEUDO_DIR  = os.path.join("..","..","pseudopotentials","")
 CALC_FROM_INPUT = False
 INPUT_MODEL = "input_model"
 CMD = "mpirun -np %d pw.x"%NP
-
-a = 2.46 # surface cell parameter in angstroms
-n,m = 3,2 # surface repetition numbers
+PSEUDOS = ["C.pbe-rrkjus.UPF","H.pbe-rrkjus_psl.1.0.0.UPF","N.pbe-n-rrkjus_psl.0.1.UPF", ELEMENT_PSEUDO]
 
 def create(fname):
 	"""
@@ -72,13 +74,13 @@ def set_calc():
 		# &SYSTEM
 		calc.system["ibrav"]       = 0
 		calc.system["celldm(1)"]   = a*1.889725989 # cell parameter in bohr
-		#calc.system["nat"]        =
-		#calc.system["ntyp"]       =
+		#calc.system["nat"]         =
+		#calc.system["ntyp"]        =
 		calc.system["nspin"]       = 1
 		calc.system["occupations"] = "\"smearing\""
 		calc.system["degauss"]     = 0.02
-		calc.system["ecutwfc"]     = 32
-		calc.system["ecutrho"]     = 320.0
+		calc.system["ecutwfc"]     = 36
+		calc.system["ecutrho"]     = 360.0
 		calc.system["smearing"]    = "\"gaussian\""
 		calc.system["input_dft"]   = "\"vdW-DF\""
 		
@@ -100,7 +102,7 @@ def set_calc():
 		calc.v3 = [0,0,10]
 		
 		# ATOMIC_SPECIES
-		calc.pseudopotential = ["C.pbe-rrkjus.UPF","H.pbe-rrkjus_psl.1.0.0.UPF"]
+		calc.pseudopotential = PSEUDOS
 		
 		# ATOMIC_POSITIONS
 		calc.atomic_positions_units = "angstrom"
@@ -121,22 +123,18 @@ def build_structures():
 	
 	# Selecting a surface and molecules
 	surface_file = "graphene_%dx%d.xyz"%(n,m)
-	molecule_file = "benzene.xyz"
+	molecule_file = "%s_phthalocyanine.xyz"%(ELEMENT.lower())
 	surface = create(SURFACES_DIR + surface_file)
-	
-	molecules = list()
-	benzene = create(MOLECULES_DIR + molecule_file)
-	molecules.append(benzene)
+	molecule = create(MOLECULES_DIR + molecule_file)
 	
 	# Molecule's alocation parameters
 	params = list()
 	
 	# Defining sites
-	hc_site = surface.get_coord_between(4,11) #hexagon center site
-	aa_site = surface.get_coord_between(12) #above atom site
-	ab_site = surface.get_coord_between(12,13) #above C-C bond
-	
-	sites = [hc_site, aa_site, ab_site]
+	hc_site = surface.get_coord_between(40,55) #hexagon center site
+	aa_site = surface.get_coord_between(55) #above atom site
+	ab_site = surface.get_coord_between(55,56) #above bond site
+	sites = [ hc_site, aa_site, ab_site]
 	
 	# Defining align distances
 	angles = [0, 15, 30, 45]
@@ -155,21 +153,21 @@ def build_structures():
 				label = "above_bond"
 				site_dir = AB_DIR
 		
-			iparam = {    "surface" : surface,
-						"molecules" : molecules,
+			iparam= {     "surface" : surface,
+						"molecules" : [molecule],
 							 "site" : s,
 							"label" : label,
 				   	  "align_point" : molecule.centersym(), 
-						     "dist" : 3,
+						     "dist" : ALIGN_DISTANCE,
 						 "rotation" : True,
 						    "angle" : a,
-						  "saveinp" : True,
-						  "inpfile" : site_dir+INPUTS_DIR+"%.2f.in"%a,
+					      "saveinp" : True,
+						  "inpfile" : site_dir+INPUTS_DIR+"%.2f.in"%(a),
 						  "saveout" : True,
-						  "outfile" : site_dir+OUT_DIR+"%.2f.out"%a,
+						  "outfile" : site_dir+OUT_DIR+"%.2f.out"%(a),
 					   "savecoords" : True,
-					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%.2f.xyz"%a
-					 }
+					   "coordsfile" : site_dir+FINAL_COORDS_DIR+"%.2f.xyz"%(a)
+					}
 			params.append(iparam)
 		      
 	"""BUILDING"""
@@ -187,8 +185,14 @@ def build_structures():
 		slabpath = "%.2f.xyz"%(slab.molecules[0].angle)
 		if slab.molecules[0].site==hc_site:
 			slabpath = HC_DIR + slabpath
+		elif slab.molecules[0].site==aa_site:
+			slabpath = AA_DIR + slabpath
+		elif slab.molecules[0].site==ab_site:
+			slabpath = AB_DIR + slabpath
 		slab.writexyz(slabpath)
 		
+	sim.save()
+	
 	return sim
 	
 if __name__=="__main__":
@@ -210,11 +214,8 @@ if __name__=="__main__":
 			sim.load("built.dat")
 	
 	#Calculations
-	print(">>> Starting Calculation Routine")
 	if CALCULATE:
-		calc = set_calc()
-		sim.set_qe(calc)
-		sim.run_qe(cmd=CMD)
+		sim.run_qe(cmd=CMD,save_when_done=False)
 		sim.save("results.dat")
 	
-	print(">>> Done!")
+	print("Finished simulation!")

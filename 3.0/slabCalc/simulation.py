@@ -69,7 +69,7 @@ class Sim(object):
 		for i in range(len(self.slabs)):
 			self.dat[i]["calc"] = self.slabs[i].set_qe_calculation(calc)
 			
-	def run_qe(self,cmd,silent=False,save_when_done=True,savefile="sim.pickle"):
+	def run_qe(self,cmd,silent=False,save_when_done=True,savefile="sim.dat"):
 		"""
 		"""
 		for i in range(len(self.dat)):
