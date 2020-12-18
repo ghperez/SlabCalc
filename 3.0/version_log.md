@@ -78,3 +78,7 @@
 ## 28/11/2020
 - fixed all examples according to the ishues detected 27/11
 - implemented checkScript.py for fast check calculations
+
+## 18/12/2020
+- SlabCalc succeded to run graph+benzene batch example, results stored in the examples folder
+- graph+cu_phthalocyanine example running into Titanio's cluster
