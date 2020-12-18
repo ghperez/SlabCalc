@@ -111,6 +111,9 @@ class Sim(object):
 			
 		self.dat[i]["status"]="paused"
 		
+		if save_steps:
+			self.save(savefile)
+		
 		try:
 			out  = calc.run(cmd, input_string, saveout, outfile, savecoords, coordsfile)
 			if out.jobdone:
