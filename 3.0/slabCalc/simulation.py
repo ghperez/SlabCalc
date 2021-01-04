@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Sun Aug 30 13:33:26 2020
 
@@ -7,16 +5,16 @@ Created on Sun Aug 30 13:33:26 2020
     -------------------
     Objects for simulations using structures built with SlabCalc
 
-@author: gabriel
+author: Gabriel
+institution:  Universidade Federal do ABC (UFABC)
 """
-from slabCalc.utilities import *
 from slabCalc import *
 import os
 import pickle
 
 class Sim(object):
 	"""
-    Classe usada para rodar os cálculos com as superfícies
+	Class for running QE calculations with the slabs
 	"""
 	def __init__(self):
 		"""
@@ -26,7 +24,7 @@ class Sim(object):
         
 	def create_slabs(self,*params):
 		"""
-		(list) params : lista de dicionarios de parametros
+		(list) params : list of dictionaries containing slab's parameters (see set_molecule_parameters documentation)
 		"""
 		if (type(params[0])==list or type(params[0])==tuple):
 			params = params[0]
@@ -56,6 +54,7 @@ class Sim(object):
 			
 	def build_slabs(self,silent=False):
 		"""
+		Build all slabs in the self.slabs list
 		"""
 		for i in range(len(self.slabs)):
 			self.slabs[i].build(silent=silent)
@@ -65,12 +64,14 @@ class Sim(object):
 
 	def set_qe(self,calc):
 		"""
+		Set QE calculations for all slabs in self.slabs list
 		"""
 		for i in range(len(self.slabs)):
 			self.dat[i]["calc"] = self.slabs[i].set_qe_calculation(calc)
 			
 	def run_qe(self,cmd,silent=False,save_when_done=True,savefile="sim.dat"):
 		"""
+		Runs Quantum Espresso calculation for ALL slabs in self.slabs list
 		"""
 		for i in range(len(self.dat)):
 			saveinp = self.dat[i]["saveinp"]
@@ -98,6 +99,12 @@ class Sim(object):
 				 
 	def calculate_slab(self,i,cmd,calc,input_string,save_steps=False,savefile="temp.pickle"):
 		"""
+		Runs Quantum Espresso calculation for ith slab in self.slabs
+
+		(str) cmd          : terminal command for running Quantum Espresso
+		(str) input_string : generated with the QE's calc object
+		(bool) save_steps  : if true then will save the simulation after each step in the file
+							 specified in "savefile" string  
 		"""
 		saveout    = self.dat[i]["saveout"]
 		outfile    = self.dat[i]["outfile"]
@@ -129,19 +136,19 @@ class Sim(object):
 				
 	def save(self,fname="sim.dat"):
 		"""
+		Saves the simulation state to a binary file (pickle)
 		"""
 		with open(fname,"wb") as f:
 			pickle.dump(self.dat, f)
 			
 	def load(self,fname="sim.dat"):
 		"""
+		Loads simulation from a binary file (pickle)
 		"""
 		with open(fname,"rb") as f:
 			self.dat = pickle.load(f)
 			
 	def _set_qe_params(self,i):
-		"""
-		"""
 		params = ["saveinp","inpfile","saveout",
 				  "outfile","savecoords","coordsfile"]
 		for p in params:

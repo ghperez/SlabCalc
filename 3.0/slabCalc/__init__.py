@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
     SlabCalc
     --------
-    Conjunto de objetos para o estudo de superfícies 2D utilizando métodos
-    computacionais.
+	Set of objects for studying 2D atomic surfaces with python
 
-autor:       Gabriel
-instituição: Universidade Federal do ABC (UFABC)
+author:       Gabriel
+institution:  Universidade Federal do ABC (UFABC)
 """
 
 from molSimplify.Scripts.cellbuilder_tools import*
@@ -19,7 +16,7 @@ import os
 
 class mol3D(ms.mol3D):
 	"""
-	Redefinicao da classe mol3D para uso no slabCalc
+	Modification of Molsimplify's mol3D object with new implemented and superposed methods
 	"""
 	def __init__(self):
 		super(mol3D, self).__init__()
@@ -33,17 +30,20 @@ class mol3D(ms.mol3D):
 		
 	def set_molecule_parameters(self,params):
 		"""
-		Define os parametros para a alocacao da molecula sobre a superficie
-		
-		Parametros
-        ----------
-        	(list) site         : sitio sobre a superficie
-        	(list) align_point  : ponto de alinhamento na molecula
-           (float) dist         : distancia de alinhamento
-            (bool) rotation     : se Verdadeiro então a molecula vai ser rotacionada
-           (float) angle        : angulo
-            (list) axis         : eixo (z axis is the default)
-            (list) rpoint       : ponto por onde passa o eixo de rotacao
+		Set the alocation parameters
+
+		Arguments
+        ---------
+        (list) site         : coordinations of surface's site
+        (list) align_point  : coordinations of the molecule's align point
+        (float) dist        : align distance
+		(bool) rotation     : If true then rotate the molecule
+			
+		Rotational args:
+		---------------
+		(float) angle        
+        (list) axis         : z axis is the default
+        (list) rpoint       : intercept point of the axis
 		"""
 		self.site   = params["site"].copy()
 		self.dist   = params["dist"]
@@ -85,24 +85,19 @@ class mol3D(ms.mol3D):
 
 class Slab(mol3D,object):
 	"""
-	Classe da superfície
+	Surface's class
 
-	subclasse da classe mol3D, para mais informações leia a documentação do molSimplify
+	mol3D's child class, for more information please read Molsimplify's documentation
 	"""
 	def __init__(self,surface=None,*molecules,cell_vector=None,extents=None):
 		"""
-		Método Construtor
-
-		Propriedades
-			(object)  surface       :  objeto mol3D da superfície
-              
-			(object)  molecules     :  objetos mol3D de moléculas
-              
-			(list)  cell_vector  :  vetores de célula, usados para determinar
-                                      a extensão da superfície. Você pode tanto
-                                      passar este parâmetro ou o parâmetro extents
-                                      
-			(list)  extents       :  um vetor de coordenadas dos limites da superfície
+		Slab's properties:
+		-----------------
+			(object)  surface       :  mol3D's surface instance
+		    (list)  molecules       :  list of mol3D's molecules instances
+			(list)  cell_vector     :  unity cell vector used for establish surface's extention.
+									   The user may pass this parameter or the 'extents' one.
+			(list)  extents         :  vector of surface's boarders
 		"""
 		super(Slab, self).__init__()
 		
@@ -125,12 +120,10 @@ class Slab(mol3D,object):
 
 	def build(self,silent=False):
 		"""
-		Insere a molécula sob a superfície
-
+		Insert the molecule above the surface
             
-            (list) msite : ponto que vai ser alinhado na molécula
-           (float) adist : distância de alinhamento em angstrons
-
+            (list) msite : align point in molecule
+           (float) adist : align distance
 		"""
 		# INITIALISING THE COMBINED SLAB
 		cslab = mol3D()
@@ -171,10 +164,9 @@ class Slab(mol3D,object):
 
 	def set_qe_calculation(self,in_calc):
 		"""
-        Retorna um input do Quantum Espresso em formato de string confome um
-        um objeto calc pré-configurado
+		Returns a Quantum Espresso's input as a string according to a calc object pre-set
         
-        (object) calc      : objeto da biblioteca QE
+        (object) calc      : QE's library object for setting Quantum Espresso's calculations
 		"""
 		out_calc = deepcopy(in_calc)
 		
@@ -193,9 +185,6 @@ class Slab(mol3D,object):
 		return out_calc
     
 	def copy(self):
-		"""
-        Método para fazer cópias das superfícies
-		"""
 		copyslab = Slab()
 		copyslab.surface.copymol3D(self.surface)
 		copyslab.molecules = self.copy_molecules()
@@ -219,21 +208,7 @@ class Slab(mol3D,object):
 
 	def clear(self):
 		"""
-        Reinicia a superfície
+		Resets the slab to the pre-built form
 		"""
 		self.__init__(self.surface,self.molecules,extents=self.extents)
 		print("Slab reset!")
-
-"""
-    Funções úteis para obter os pontos de alocação:
-
-        - center_of_sym([molecule.getAtom(i).coords() for i in inds])
-            # retorna as coordenadas do ponto entre os átomos de índicies
-            especificados em "inds"
-        - mol3D_object.centersym()
-            # retorna o centro de simetria de um objeto mol3D
-            
-	Leitura e escrita de arquivos xyz:
-		mol3D.readfromxyz(fname)
-        mol3D.writexyz(fname)    
-"""

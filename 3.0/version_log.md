@@ -2,7 +2,6 @@
 
 ## TO-DOS
 - EXECUTE PROGRAMS IN UNBUFFER MODE (python -u script.py 1> out 2> err &)
-- fix the documentation
 - follow the state of Titanio's and Lab's calculations
 
 ## 11/10/2020
@@ -82,3 +81,6 @@
 ## 18/12/2020
 - SlabCalc succeded to run graph+benzene batch example, results stored in the examples folder
 - graph+cu_phthalocyanine example running into Titanio's cluster
+
+## 04/01/2021
+- Translated documentation to english

@@ -3,6 +3,8 @@ import os
 
 SURFACES_DIR  = os.path.join("..","surfaces","")
 MOLECULES_DIR = os.path.join("..","molecules","")
+SURFACE_NAME = "graphene_2x1"
+MOLECULE_NAME = "hydrogen"
 
 def create(fname):
 	"""
@@ -17,10 +19,8 @@ if __name__=="__main__":
 	"""SETTING BUILDING OPTIONS"""
 	
 	# Selecting a surface and molecules
-	surface_file = "graphene_2x1.xyz"
-	molecule_file = "hydrogen.xyz"
-	surface = create(SURFACES_DIR + surface_file)
-	molecule = create(MOLECULES_DIR + molecule_file)
+	surface = create(SURFACES_DIR + SURFACE_NAME + ".xyz")
+	molecule = create(MOLECULES_DIR + MOLECULE_NAME + ".xyz")
 	
 	# Molecule's alocation parameters
 	params = {       "site" : surface.get_coord_between(5,2), #get coordination between atoms indexes

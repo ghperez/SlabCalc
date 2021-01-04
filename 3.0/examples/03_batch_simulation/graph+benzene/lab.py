@@ -124,7 +124,6 @@ def build_structures():
 	surface = create(SURFACES_DIR + surface_file)
 	
 	molecule = create(MOLECULES_DIR + molecule_file)
-	molecules = [ molecule]
 	
 	# Molecule's alocation parameters
 	params = list()
