@@ -50,9 +50,6 @@ def set_restart_mode(calc,option):
 	elif option=="r":
 		calc.control["restart_mode"]="\"restart\""
 
-def reset_calc(calc):
-	calc.x,calc.y,calc.z,calc.atomic_species,calc.atomic_mass,calc.atom_type= ([],[],[],[],[],[])
-
 def read_from_string(istring):
 	"""
 	Configura um objeto pw calc a partir de uma string

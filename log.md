@@ -1,8 +1,6 @@
 # SlabCalc3.0 Log
 
-## TO-DOS
 - EXECUTE PROGRAMS IN UNBUFFER MODE (python -u script.py 1> out 2> err &)
-- follow the state of Titanio's and Lab's calculations
 
 ## 11/10/2020
 - **slabs are created using molecule and surface passed as mol3D object**
