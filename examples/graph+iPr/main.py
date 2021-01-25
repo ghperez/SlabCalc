@@ -16,8 +16,8 @@ LOAD_FILE = "temp.pickle"
 
 # BUILDING ROUTINE GLOBAL VARIABLES
 BUILD = True
-SURFACES_DIR  = os.path.join("..","..","surfaces","")
-MOLECULES_DIR = os.path.join("..","..","molecules","")
+SURFACES_DIR  = os.path.join("..","surfaces","")
+MOLECULES_DIR = os.path.join("..","molecules","")
 
 HC_DIR = os.path.join("hexagon_center","")
 AA_DIR = os.path.join("above_atom","")
@@ -123,7 +123,7 @@ def build_structures():
 	# Selecting a surface and molecules
 	surface_file = "graphene_%dx%d.xyz"%(n,m)
 	molecule_file = "iPr.xyz"
-        surface = create(SURFACES_DIR + surface_file)
+	surface = create(SURFACES_DIR + surface_file)
 	molecule = create(MOLECULES_DIR + molecule_file)
 	
 	# Molecule's alocation parameters
