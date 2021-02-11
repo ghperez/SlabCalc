@@ -1,5 +1,40 @@
-140
- C  N  H  B                             
+&CONTROL
+                 calculation = 'relax',
+                restart_mode = 'from_scratch',
+                      prefix = 'TCNQ-s1',
+                  pseudo_dir = '../pseudos',
+                     outdir  = 'out',
+/
+&SYSTEM
+                       ibrav = 0, 
+                         nat = 140,
+                        ntyp = 4,
+                 occupations = 'smearing',
+                     degauss = 0.02
+                     ecutwfc = 28.00 ,
+                     ecutrho = 280.00 , 
+                    smearing = 'gaussian',
+		   input_dft = 'vdW-DF',
+/
+&ELECTRONS
+            electron_maxstep = 200,
+                    conv_thr = 1.0D-6 ,
+                 mixing_beta = 0.5,
+             diagonalization = 'david' ,
+/
+&IONS
+                ion_dynamics = 'bfgs',
+/
+CELL_PARAMETERS angstrom
+ 20.290600   0.000000   0.000000
+  0.000000  17.559500   0.000000
+  0.000000   0.000000  15.000000
+ATOMIC_SPECIES
+    C   12.01070   C.pbe-n-kjpaw_psl.1.0.0.UPF
+    H    1.00784   H.pbe-kjpaw_psl.1.0.0.UPF
+    N   14.00670   N.pbe-n-kjpaw_psl.1.0.0.UPF
+    B   10.81100   B.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS angstrom
  C    6.171380    8.422068    9.870778
  C    6.920763    9.652493    9.864589
  C    8.294993    9.651702    9.865653
@@ -140,3 +175,5 @@
  B   19.471909    9.792976    6.796266
  B   19.470243   12.717260    6.847854
  B   19.468733   15.646402    6.890549
+K_POINTS automatic
+4 4 1 0 0 0
